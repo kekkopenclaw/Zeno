@@ -5,17 +5,23 @@
     "bind": "loopback",
     "auth": {
       "mode": "token",
-      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+      "token": "${OPENCLAW_GATEWAY_TOKEN}",
+      "allowTailscale": true
     },
+     "trustedProxies": [
+      "127.0.0.1",
+      "::1",
+      "100.64.0.0/10"
+    ],
+
     "tailscale": {
-      "mode": "off",
+      "mode": "serve",
       "resetOnExit": false
     },
      "controlUi": {
       "allowedOrigins": [
-        "http://localhost:18789",
-        "http://127.0.0.1:18789",
-        "francescos-mac-mini-1.taila9bb1f.ts.net"
+        "http://100.100.218.48:18789",
+        "https://francescos-mac-mini.taila9bb1f.ts.net"
       ]
     }
   },

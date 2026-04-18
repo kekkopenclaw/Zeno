@@ -54,3 +54,14 @@ whisper/
 EOF
 tasks/runs.sqlite
 telegram/update-offset-default.json
+agents/main/agent/auth-state.json
+agents/main/agent/auth-state.json
+agents/main/agent/models.json
+tasks/runs.sqlite
+telegram/update-offset-default.json
+workspace/MissionControl/src/MissionControl.API/obj/
+workspace/MissionControl/src/MissionControl.API/bin/
+workspace/MissionControl/src/MissionControl.API/Properties/
+workspace/MissionControl/src/MissionControl.Application.Assembly/
+workspace/MissionControl/src/MissionControl.Application/obj/Debug/net10.0/MissionControl.Application.AssemblyInfoInputs.cache
+workspace/MissionControl/src/MissionControl.Application/obj/Debug/net10.0/MissionControl.Application.csproj.AssemblyReference.cache
