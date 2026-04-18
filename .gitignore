@@ -1,6 +1,10 @@
 # --- OpenClaw Secrets (NEVER COMMIT) ---
 .env
 
+auth-state.json
+runs.sqlite-shm
+runs.sqlite
+runs.sqlite-wal
 device-auth.json
 devices/
 bin
@@ -48,3 +52,5 @@ security-tools/
 whisper/
 .DS_Store
 EOF
+tasks/runs.sqlite
+telegram/update-offset-default.json

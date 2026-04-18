@@ -23,12 +23,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Agent-OpenClaw/README.md",
+                "file": "AGENTS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "AGENTS"
             }
           }
         ],
@@ -105,7 +105,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Agent-OpenClaw/README.md",
+                "file": "AGENTS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for README"
+              "title": "Backlinks for AGENTS"
             }
           },
           {
@@ -124,12 +124,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Agent-OpenClaw/README.md",
+                "file": "AGENTS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from README"
+              "title": "Outgoing links from AGENTS"
             }
           },
           {
@@ -167,13 +167,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Agent-OpenClaw/README.md",
+                "file": "AGENTS.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of README"
+              "title": "Outline of AGENTS"
             }
           }
         ]
@@ -194,17 +194,18 @@
       "bases:Create new base": false
     }
   },
-  "active": "c6a3da7a1e633570",
+  "active": "e466e8df81340951",
   "lastOpenFiles": [
-    "SOUL.md",
-    "Built-In-Memory.md",
-    "AGENTS.md",
+    "Agent-Shared/project-state.md",
+    "Agent-Shared/decisions-log.md",
     "Agent-OpenClaw/welcome.md",
     "Agent-OpenClaw/README.md",
     "Agent-Hermes/working-context.md",
     "Agent-Hermes/mistakes.md",
+    "SOUL.md",
+    "Built-In-Memory.md",
+    "AGENTS.md",
     "Agent-Hermes/daily/2026-04-12.md",
-    "Agent-Shared/user-profile.md",
-    "Agent-Shared/decisions-log.md"
+    "Agent-Shared/user-profile.md"
   ]
 }
