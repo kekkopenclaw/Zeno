@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "profiles": {
+    "github-copilot:github": {
+      "type": "token",
+      "provider": "github-copilot",
+      "token": "${GITHUB_COPILOT_TOKEN}"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+# --- OpenClaw Secrets (NEVER COMMIT) ---
+.env
+
+device-auth.json
+devices/
+bin
+
+*.key
+*.pem
+credentials/
+device.json
+pairing-store.json
+logs/
+
+# --- Build Artifacts & System Noise ---
+.artifacts/
+dist/
+build/
+*.map
+*.svg
+*.runtime.js
+*.runtime.ts
+node_modules/
+.npm/
+
+# --- Local Data & History ---
+sessions/
+
+media/
+sandboxes/
+cache/
+.claude/
+
+whisper/
+security-tools/
+shared/
+
+# --- macOS Specific ---
+.DS_Store
+.AppleDouble
+._*
+*.h
+
+cat <<EOF > .gitignore
+logs/
+tools/
+security-tools/
+whisper/
+.DS_Store
+EOF

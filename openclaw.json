@@ -1,0 +1,128 @@
+{
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "allowInsecureAuth": true
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-04-12T19:47:07.969Z",
+    "lastRunVersion": "2026.4.10",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.4.10",
+    "lastTouchedAt": "2026-04-12T21:20:00.000Z"
+  },
+  "auth": {
+    "profiles": {
+      "github-copilot:github": {
+        "provider": "github-copilot",
+        "mode": "token"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/Users/kekko/.openclaw/workspace",
+      "model": {
+        "primary": "github-copilot/gpt-4.1"
+      },
+      "models": {
+        "github-copilot/gpt-4.1": {},
+        "github-copilot/gpt-4o": {}
+      },
+      "compaction": {
+        "reserveTokensFloor": 40000,
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 10000
+        }
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "model": "github-copilot/gpt-4.1",
+        "tools": {
+          "profile": "full"
+        }
+      }
+    ]
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "full",
+    "exec": {
+      "security": "full",
+      "ask": "always"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_TOKEN}",
+      "dmPolicy": "allowlist",
+      "allowFrom": [
+        "820783990"
+      ],
+      "contextVisibility": "all",
+      "groups": {
+        "*": {
+          "requireMention": true
+        }
+      },
+      "streaming": {
+        "mode": "partial",
+        "chunkMode": "newline",
+        "preview": {
+          "chunk": {}
+        },
+        "block": {
+          "enabled": true,
+          "coalesce": {}
+        }
+      }
+    }
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        },
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "github-copilot": {
+        "enabled": true
+      }
+    }
+  }
+}
+

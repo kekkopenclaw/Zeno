@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run .NET backend on port 5083, host 0.0.0.0",
+			"type": "shell",
+			"command": "dotnet run --urls=http://0.0.0.0:5083",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

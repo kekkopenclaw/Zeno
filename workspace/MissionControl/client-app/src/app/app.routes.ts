@@ -1,0 +1,25 @@
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+  { path: 'tasks',     loadComponent: () => import('./features/tasks/tasks.component').then(m => m.TasksComponent) },
+  { path: 'agents',    loadComponent: () => import('./features/agents/agents.component').then(m => m.AgentsComponent) },
+  { path: 'projects',  loadComponent: () => import('./features/projects/projects.component').then(m => m.ProjectsComponent) },
+  { path: 'memory',    loadComponent: () => import('./features/memory/memory.component').then(m => m.MemoryComponent) },
+  { path: 'logs',     loadComponent: () => import('./features/logs/logs.component').then(m => m.LogsComponent) },
+  { path: 'people',    loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
+  { path: 'team',      loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
+  { path: 'calendar',  loadComponent: () => import('./features/calendar/calendar.component').then(m => m.CalendarComponent) },
+  { path: 'office',    loadComponent: () => import('./features/office/office.component').then(m => m.OfficeComponent) },
+  { path: 'council',   loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'content',   loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'approvals', loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'system',    loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'radar',     loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'factory',   loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'pipeline',  loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: 'ai-lab',    loadComponent: () => import('./features/office/office.component').then(m => m.OfficeComponent) },
+  { path: 'feedback',  loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
+  { path: '**', redirectTo: 'dashboard' },
+];
