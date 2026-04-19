@@ -63,5 +63,11 @@ workspace/MissionControl/src/MissionControl.API/obj/
 workspace/MissionControl/src/MissionControl.API/bin/
 workspace/MissionControl/src/MissionControl.API/Properties/
 workspace/MissionControl/src/MissionControl.Application.Assembly/
-workspace/MissionControl/src/MissionControl.Application/obj/Debug/net10.0/MissionControl.Application.AssemblyInfoInputs.cache
-workspace/MissionControl/src/MissionControl.Application/obj/Debug/net10.0/MissionControl.Application.csproj.AssemblyReference.cache
+*.cache/
+workspace/MissionControl/src/MissionControl.API/obj/Debug/net10.0/MissionControl.API.AssemblyInfo.cs
+*.dll
+*.pdb
+agents/main/agent/auth-state.json
+*.sqlite
+agents/main/agent/auth-state.json
+cron/runs/

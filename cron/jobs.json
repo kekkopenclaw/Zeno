@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "991985a3-b831-4b81-ac16-2117c59208bc",
+      "agentId": "main",
+      "sessionKey": "agent:main:telegram:direct:820783990",
+      "name": "nightly-dream-agent-memory",
+      "description": "Nightly dream: agent LLM summarize lessons, embed QMD vault, extract facts to SQLite (3:03 AM Europe/London).",
+      "enabled": true,
+      "createdAtMs": 1776562181961,
+      "updatedAtMs": 1776564188072,
+      "schedule": {
+        "kind": "cron",
+        "expr": "3 3 * * *",
+        "tz": "Europe/London"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "Run: node obsidian/summarize-to-lessons.js && qmd embed && node obsidian/l3-to-sqlite.js\n\nAutomated: summarize new lessons, embed vault, extract facts to SQLite."
+      },
+      "state": {
+        "nextRunAtMs": 1776650580000,
+        "lastRunAtMs": 1776564180005,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 8067,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    }
+  ]
+}
