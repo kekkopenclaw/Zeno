@@ -2,6 +2,7 @@ using MissionControl.Infrastructure;
 using MissionControl.Infrastructure.Data;
 
 using MissionControl.Application.Services;
+using MissionControl.Application.Options;
 using MissionControl.API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using MissionControl.Infrastructure.Hubs;
@@ -54,6 +55,10 @@ builder.Services.AddOpenApi();
 
 // SignalR
 builder.Services.AddSignalR();
+
+// Pipeline stage config (skill-based agent routing)
+builder.Services.Configure<PipelineStageConfig>(
+    builder.Configuration.GetSection(PipelineStageConfig.SectionName));
 
 // Infrastructure (EF Core, repos, background orchestration, SignalR notifier)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")

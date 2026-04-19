@@ -32,6 +32,7 @@ export class SignalRService {
   lastTaskUpdate = signal<TaskItem | null>(null);
   lastMemoryAdded = signal<MemoryEntry | null>(null);
   lastAgentStarted = signal<Agent | null>(null);
+  lastAgentUpdated = signal<Agent | null>(null);
   agentLogLines = signal<{agentId: string; line: string} | null>(null);
 
   /** true when the WebSocket hub connection is active */
@@ -81,6 +82,11 @@ export class SignalRService {
     // Live event: agent was started
     this.hub.on('AgentStarted', (agent: Agent) => {
       this.lastAgentStarted.set(agent);
+    });
+    // Live event: agent properties updated (from edit/update operations)
+    this.hub.on('AgentUpdated', (agent: Agent) => {
+      this.lastAgentUpdated.set(agent);
+      this.lastAgentStarted.set(agent); // also trigger agent list refresh
     });
     // Live event: new log line from agent output/stream
     this.hub.on('AgentLogLine', (data: {agentId: string; line: string}) => {

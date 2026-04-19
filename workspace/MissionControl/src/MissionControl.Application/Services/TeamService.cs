@@ -45,6 +45,31 @@ public class TeamService
         };
     }
 
+    public async Task<TeamDto?> GetByIdAsync(int id)
+    {
+        var team = await _teamRepository.GetByIdAsync(id);
+        if (team == null) return null;
+        return new TeamDto { Id = team.Id, Name = team.Name, Description = team.Description, ProjectId = team.ProjectId };
+    }
+
+    public async Task<TeamDto?> UpdateAsync(int id, CreateTeamDto dto)
+    {
+        var team = await _teamRepository.GetByIdAsync(id);
+        if (team == null) return null;
+        team.Name = dto.Name;
+        team.Description = dto.Description;
+        await _teamRepository.UpdateAsync(team);
+        return new TeamDto { Id = team.Id, Name = team.Name, Description = team.Description, ProjectId = team.ProjectId };
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var team = await _teamRepository.GetByIdAsync(id);
+        if (team == null) return false;
+        await _teamRepository.DeleteAsync(team);
+        return true;
+    }
+
     public async Task AddAgentAsync(int teamId, int agentId)
     {
         var agent = await _agentRepository.GetByIdAsync(agentId);

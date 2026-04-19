@@ -29,6 +29,9 @@ public class SignalRNotifier : ISignalRNotifier
     public Task NotifyAgentLogLineAsync(string agentId, string line) =>
         _hub.Clients.All.SendAsync("AgentLogLine", new { agentId, line });
 
+    public Task NotifyAgentUpdated(AgentDto agent) =>
+        _hub.Clients.All.SendAsync("AgentUpdated", agent);
+
     public Task NotifyPipelineTestProgressAsync(object payload) =>
         _hub.Clients.All.SendAsync("PipelineTestProgress", payload);
 }
