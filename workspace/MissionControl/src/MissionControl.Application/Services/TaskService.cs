@@ -1,4 +1,5 @@
 using MissionControl.Application.DTOs;
+using MissionControl.Application.Interfaces;
 using MissionControl.Domain.Entities;
 using MissionControl.Domain.Enums;
 using MissionControl.Domain.Interfaces;
@@ -8,10 +9,12 @@ namespace MissionControl.Application.Services;
 public class TaskService
 {
     private readonly ITaskRepository _repository;
+    private readonly ISignalRNotifier? _notifier;
 
-    public TaskService(ITaskRepository repository)
+    public TaskService(ITaskRepository repository, ISignalRNotifier? notifier = null)
     {
         _repository = repository;
+        _notifier = notifier;
     }
 
     public async Task<IReadOnlyList<TaskItemDto>> GetAllAsync()
@@ -49,7 +52,9 @@ public class TaskService
             CreatedAt = DateTime.UtcNow
         };
         var created = await _repository.AddAsync(task);
-        return MapToDto(created);
+        var result = MapToDto(created);
+        if (_notifier != null) await _notifier.NotifyTaskUpdatedAsync(result);
+        return result;
     }
 
     public async Task<TaskItemDto?> UpdateStatusAsync(int id, UpdateTaskStatusDto dto)
@@ -64,7 +69,9 @@ public class TaskService
         task.ReviewNotes = dto.ReviewNotes;
         task.UpdatedAt = DateTime.UtcNow;
         await _repository.UpdateAsync(task);
-        return MapToDto(task);
+        var result = MapToDto(task);
+        if (_notifier != null) await _notifier.NotifyTaskUpdatedAsync(result);
+        return result;
     }
 
     public async Task<TaskItemDto?> UpdateAsync(int id, CreateTaskItemDto dto)
@@ -79,7 +86,9 @@ public class TaskService
         task.ComplexityScore = dto.ComplexityScore;
         task.UpdatedAt = DateTime.UtcNow;
         await _repository.UpdateAsync(task);
-        return MapToDto(task);
+        var result = MapToDto(task);
+        if (_notifier != null) await _notifier.NotifyTaskUpdatedAsync(result);
+        return result;
     }
 
     public async Task<bool> DeleteAsync(int id)

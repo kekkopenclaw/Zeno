@@ -4,6 +4,7 @@ using MissionControl.Infrastructure.Data;
 using MissionControl.Application.Services;
 using MissionControl.API.Middleware;
 using Microsoft.EntityFrameworkCore;
+using MissionControl.Infrastructure.Hubs;
 using Serilog;
 using Serilog.Events;
 
@@ -91,6 +92,7 @@ app.UseCors();
 app.UseSerilogRequestLogging();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<AgentHub>("/hubs/agent");
 
 
 app.Run();
