@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivityLogService } from '../../core/services/activity-log.service';
 import { SignalRService } from '../../core/services/signalr.service';
@@ -29,6 +29,9 @@ export class LogsPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.activity.getByProject(1).subscribe(d => this.logs.set(d));
-    this.logs = this.signalr.activityFeed;
+    effect(() => {
+      const live = this.signalr.activityFeed();
+      if (live.length > 0) this.logs.set(live);
+    });
   }
 }
