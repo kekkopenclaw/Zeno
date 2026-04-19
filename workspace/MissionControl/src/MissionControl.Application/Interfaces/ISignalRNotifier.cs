@@ -13,6 +13,8 @@ public interface ISignalRNotifier
     Task NotifyTaskUpdatedAsync(TaskItemDto task) => NotifyTaskUpdated(task);
     Task NotifyLogCreatedAsync(ActivityLogDto log) => NotifyLogCreated(log);
     Task NotifyAgentStartedAsync(AgentDto agent) => NotifyAgentStarted(agent);
+    Task NotifyAgentUpdatedAsync(AgentDto agent) => NotifyAgentUpdated(agent);
+    Task NotifyAgentUpdated(AgentDto agent);
     Task NotifyAgentLogLineAsync(string agentId, string line);
 
     /// <summary>Broadcasts a pipeline-test progress event to all connected clients.</summary>

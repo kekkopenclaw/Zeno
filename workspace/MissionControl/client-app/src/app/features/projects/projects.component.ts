@@ -36,15 +36,33 @@ import type { Project } from '../../core/models';
 
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
     @for (p of projects(); track p.id) {
-      <div class="card card-hover" style="cursor:pointer">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
-          <div style="width:36px;height:36px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">📁</div>
-          <span class="badge" style="background:rgba(34,197,94,0.1);color:#22c55e">Active</span>
+      @if (editingId() === p.id) {
+        <!-- Inline edit form -->
+        <div class="card" style="display:flex;flex-direction:column;gap:8px;" data-testid="project-edit-card">
+          <input [(ngModel)]="editName" class="form-input" style="margin-bottom:0" data-testid="edit-project-name" />
+          <textarea [(ngModel)]="editDesc" class="form-textarea" style="height:56px;margin-bottom:0" data-testid="edit-project-desc"></textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-ghost" (click)="cancelEdit()" style="font-size:12px">Cancel</button>
+            <button class="btn btn-primary" (click)="saveProject(p.id)" style="font-size:12px" data-testid="save-project-btn">Save</button>
+          </div>
         </div>
-        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:5px">{{p.name}}</div>
-        <div style="font-size:12px;color:var(--text-muted);line-height:1.5">{{p.description}}</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">Created {{p.createdAt | date:'MMM d, y'}}</div>
-      </div>
+      } @else {
+        <div class="card card-hover" style="cursor:pointer;position:relative;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div style="width:36px;height:36px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">📁</div>
+            <span class="badge" style="background:rgba(34,197,94,0.1);color:#22c55e">Active</span>
+          </div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:5px">{{p.name}}</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5">{{p.description}}</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <span>Created {{p.createdAt | date:'MMM d, y'}}</span>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-sm" (click)="startEdit(p); $event.stopPropagation()" title="Edit project" data-testid="edit-project-btn" style="font-size:11px;padding:2px 7px;">✏️</button>
+              <button class="btn btn-sm" (click)="deleteProject(p.id); $event.stopPropagation()" title="Delete project" data-testid="delete-project-btn" style="font-size:11px;padding:2px 7px;color:#ef4444;border-color:#ef4444;">🗑</button>
+            </div>
+          </div>
+        </div>
+      }
     }
     <div class="card" (click)="showForm = true"
          style="cursor:pointer;border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:140px;color:var(--text-muted)">
@@ -76,6 +94,10 @@ export class ProjectsComponent implements OnInit {
   newName = '';
   newDesc = '';
 
+  editingId = signal<number | null>(null);
+  editName = '';
+  editDesc = '';
+
   ngOnInit(): void { this.svc.getAll().subscribe(d => this.projects.set(d)); }
 
   createProject(): void {
@@ -90,6 +112,33 @@ export class ProjectsComponent implements OnInit {
         this.saving.set(false);
       },
       error: () => this.saving.set(false),
+    });
+  }
+
+  startEdit(project: Project): void {
+    this.editingId.set(project.id);
+    this.editName = project.name;
+    this.editDesc = project.description;
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  saveProject(id: number): void {
+    if (!this.editName.trim()) return;
+    this.svc.update(id, { name: this.editName.trim(), description: this.editDesc.trim() }).subscribe({
+      next: updated => {
+        this.projects.update(list => list.map(p => p.id === id ? updated : p));
+        this.editingId.set(null);
+      },
+    });
+  }
+
+  deleteProject(id: number): void {
+    if (!confirm('Delete this project?')) return;
+    this.svc.delete(id).subscribe({
+      next: () => this.projects.update(list => list.filter(p => p.id !== id)),
     });
   }
 }

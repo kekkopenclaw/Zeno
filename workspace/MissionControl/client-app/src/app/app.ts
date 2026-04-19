@@ -381,6 +381,7 @@ interface NavItem {
     }
   `],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class App implements OnInit, OnDestroy {
   readonly signalr = inject(SignalRService);
   private logService = inject(ActivityLogService);
@@ -407,6 +408,7 @@ export class App implements OnInit, OnDestroy {
         { path: '/memory',    label: 'Memory',    icon: '💾' },
         { path: '/logs',      label: 'Logs',      icon: '📊' },
         { path: '/people',    label: 'People',    icon: '👥' },
+        { path: '/teams',     label: 'Teams',     icon: '🤝' },
         { path: '/office',    label: 'Office',    icon: '🏢' },
         { path: '/team',      label: 'Team',      icon: '🌐' },
       ],

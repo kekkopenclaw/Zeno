@@ -9,7 +9,7 @@ import { AgentService } from '../../core/services/agent.service';
 import { TaskService } from '../../core/services/task.service';
 import { ActivityLogService } from '../../core/services/activity-log.service';
 import { SignalRService } from '../../core/services/signalr.service';
-import { AgentCreateModalComponent } from './agent-create-modal.component';
+
 import type { Project, Agent, TaskItem, ActivityLog } from '../../core/models';
 
 /**
@@ -24,7 +24,7 @@ import type { Project, Agent, TaskItem, ActivityLog } from '../../core/models';
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, RouterLink, AgentCreateModalComponent],
+  imports: [DatePipe, RouterLink],
   template: `
 <div class="page" data-testid="dashboard-page">
   <div class="page-header">

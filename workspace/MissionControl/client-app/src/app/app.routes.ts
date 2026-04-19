@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'logs',     loadComponent: () => import('./features/activity-logs/logs-page.component').then(m => m.LogsPageComponent) },
   { path: 'people',    loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
   { path: 'team',      loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
+  { path: 'teams',     loadComponent: () => import('./features/teams/teams.component').then(m => m.TeamsComponent) },
   { path: 'calendar',  loadComponent: () => import('./features/calendar/calendar.component').then(m => m.CalendarComponent) },
   { path: 'office',    loadComponent: () => import('./features/office/office.component').then(m => m.OfficeComponent) },
   { path: 'council',   loadComponent: () => import('./features/council/council.component').then(m => m.CouncilComponent) },
