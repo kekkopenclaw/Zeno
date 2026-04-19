@@ -200,6 +200,16 @@ public class OrchestratorService
                 architect.Status = AgentStatus.Working;
                 await _agentRepository.UpdateAsync(architect);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(architect));
+
+                // --- PATCH: trigger real OpenClaw agent execution ---
+                if (_openClawRunner != null)
+                {
+                    var agentName = architect.Name.ToLowerInvariant();
+                    var prompt = $"You are Beerus, the architect. Plan and design the solution for: '{orchTask.Title}'. {orchTask.Description}";
+                    await _openClawRunner.TriggerTaskAsync(agentName, prompt);
+                }
+                // --- END PATCH ---
+
                 orchTask.Status = TaskItemStatus.Architecture;
                 orchTask.StatusEnteredAt = now;
                 orchTask.UpdatedAt = now;

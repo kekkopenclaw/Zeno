@@ -31,7 +31,7 @@
   },
   "meta": {
     "lastTouchedVersion": "2026.4.15",
-    "lastTouchedAt": "2026-04-18T20:45:10.421Z"
+    "lastTouchedAt": "2026-04-19T17:07:35.064Z"
   },
   "auth": {
     "profiles": {
@@ -66,6 +66,34 @@
         "tools": {
           "profile": "full"
         }
+      },
+      {
+        "id": "whis",
+        "name": "whis",
+        "workspace": "/Users/kekko/.openclaw/workspaces/whis",
+        "agentDir": "/Users/kekko/.openclaw/agents/whis/agent",
+        "model": "llama3"
+      },
+      {
+        "id": "cell",
+        "name": "cell",
+        "workspace": "/Users/kekko/.openclaw/workspaces/cell",
+        "agentDir": "/Users/kekko/.openclaw/agents/cell/agent",
+        "model": "gpt-4o-mini"
+      },
+      {
+        "id": "dende",
+        "name": "dende",
+        "workspace": "/Users/kekko/.openclaw/workspaces/dende",
+        "agentDir": "/Users/kekko/.openclaw/agents/dende/agent",
+        "model": "llama3"
+      },
+      {
+        "id": "shenron",
+        "name": "shenron",
+        "workspace": "/Users/kekko/.openclaw/workspaces/shenron",
+        "agentDir": "/Users/kekko/.openclaw/agents/shenron/agent",
+        "model": "llama3"
       }
     ]
   },
@@ -76,7 +104,8 @@
     "profile": "full",
     "exec": {
       "security": "full",
-      "ask": "always"
+      "ask": "off",
+      "host": "gateway"
     }
   },
   "channels": {
@@ -116,7 +145,6 @@
         "session-memory": {
           "enabled": true
         },
-
         "boot-md": {
           "enabled": true
         },
@@ -133,5 +161,4 @@
       }
     }
   }
-  }
-
+}
