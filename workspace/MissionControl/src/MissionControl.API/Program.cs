@@ -81,7 +81,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.Migrate();
-        await MissionControl.Infrastructure.Data.DbSeeder.SeedAgentsAsync(db);
+        MissionControl.Infrastructure.Data.DbSeeder.SeedAgentsAsync(db).GetAwaiter().GetResult();
     }
     catch (Exception ex)
     {
