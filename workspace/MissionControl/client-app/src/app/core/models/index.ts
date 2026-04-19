@@ -100,3 +100,9 @@ export interface Team {
   description: string;
   projectId: number;
 }
+
+export interface CreateTeam {
+  name: string;
+  description: string;
+  projectId: number;
+}

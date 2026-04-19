@@ -5,6 +5,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { AgentService } from '../../core/services/agent.service';
 import { SignalRService } from '../../core/services/signalr.service';
 import { AgentLogsComponent } from './agent-logs.component';
+import { AgentEditModalComponent } from './agent-edit-modal.component';
 import type { Agent } from '../../core/models';
 
 const ROLE_EMOJIS: Record<string, string> = {
@@ -55,7 +56,7 @@ const ROLE_COLORS: Record<string, string> = {
   selector: 'app-agents',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, AgentLogsComponent],
+  imports: [FormsModule, AgentLogsComponent, AgentEditModalComponent],
   template: `
 <div class="agents-layout" data-testid="agents-layout">
   <!-- ── Left: Agent Grid ── -->
@@ -155,6 +156,7 @@ const ROLE_COLORS: Record<string, string> = {
                 ▶ Resume
               </button>
             }
+            <button class="action-btn edit" (click)="openEdit(agent)" data-testid="edit-agent-btn">✏️ Edit</button>
           </div>
         </div>
       }
@@ -176,6 +178,15 @@ const ROLE_COLORS: Record<string, string> = {
       </div>
       <app-agent-logs [agentId]="selected()!.id" style="flex:1;display:flex;flex-direction:column;overflow:hidden" />
     </div>
+  }
+
+  @if (editAgent()) {
+    <app-agent-edit-modal
+      [agent]="editAgent()!"
+      [availableModels]="availableModels"
+      (saved)="onAgentSaved($event)"
+      (close)="closeEdit()">
+    </app-agent-edit-modal>
   }
 </div>
   `,
@@ -228,6 +239,8 @@ const ROLE_COLORS: Record<string, string> = {
     .action-btn.pause:hover:not(:disabled) { background: #f59e0b22; }
     .action-btn.resume { border-color: #3b82f644; background: #3b82f611; color: #3b82f6; }
     .action-btn.resume:hover:not(:disabled) { background: #3b82f622; }
+    .action-btn.edit { border-color: #6366f144; background: #6366f111; color: #6366f1; }
+    .action-btn.edit:hover:not(:disabled) { background: #6366f122; }
     .model-select { font-size: 10px; padding: 3px 4px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-muted); cursor: pointer; max-width: 120px; }
     .model-select:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -249,6 +262,7 @@ export class AgentsComponent implements OnInit, OnDestroy {
   agents       = signal<Agent[]>([]);
   selected     = signal<Agent | null>(null);
   actionBusy   = signal(false);
+  editAgent    = signal<Agent | null>(null);
 
   // Per-agent model overrides for the spawn selector
   spawnModels  = signal<Record<number, string>>({});
@@ -277,8 +291,10 @@ export class AgentsComponent implements OnInit, OnDestroy {
   roles = Object.keys(ROLE_COLORS);
 
   private lastAgentStarted$ = toObservable(this.signalrSvc.lastAgentStarted, { injector: this.injector });
+  private lastAgentUpdated$ = toObservable(this.signalrSvc.lastAgentUpdated, { injector: this.injector });
   private pollingTick$ = toObservable(this.signalrSvc.pollingTick, { injector: this.injector });
   private sub?: Subscription;
+  private updatedSub?: Subscription;
   private pollSub?: Subscription;
 
   workingCount = computed(() => this.agents().filter(a => a.status === 'Working').length);
@@ -312,6 +328,25 @@ export class AgentsComponent implements OnInit, OnDestroy {
 
   selectAgent(agent: Agent): void {
     this.selected.set(agent);
+  }
+
+  openEdit(agent: Agent): void {
+    this.editAgent.set(agent);
+  }
+
+  closeEdit(): void {
+    this.editAgent.set(null);
+  }
+
+  onAgentSaved(patch: Partial<Agent>): void {
+    const id = patch.id;
+    if (!id) return;
+    this.svc.update(id, patch).subscribe({
+      next: updated => {
+        this.agents.update(list => list.map(a => a.id === updated.id ? updated : a));
+        if (this.selected()?.id === updated.id) this.selected.set(updated);
+      },
+    });
   }
 
   spawnAgent(agent: Agent): void {
@@ -363,6 +398,13 @@ export class AgentsComponent implements OnInit, OnDestroy {
       );
     });
 
+    // Real-time agent property updates (edit/update)
+    this.updatedSub = this.lastAgentUpdated$.subscribe(updated => {
+      if (!updated) return;
+      this.agents.update(list => list.map(a => a.id === updated.id ? updated : a));
+      if (this.selected()?.id === updated.id) this.selected.set(updated);
+    });
+
     // Polling fallback
     this.pollSub = this.pollingTick$.subscribe(tick => {
       if (tick === 0) return;
@@ -372,6 +414,7 @@ export class AgentsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+    this.updatedSub?.unsubscribe();
     this.pollSub?.unsubscribe();
   }
 }

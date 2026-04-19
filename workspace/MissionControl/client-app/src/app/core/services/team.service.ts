@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-import type { Team, Agent } from '../models';
+import type { Team, CreateTeam, Agent } from '../models';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -11,15 +11,24 @@ export class TeamService {
     return this.api.get<Team[]>(`teams/by-project/${projectId}`);
   }
 
-  create(dto: Partial<Team>): Observable<Team> {
+  getById(id: number): Observable<Team> {
+    return this.api.get<Team>(`teams/${id}`);
+  }
+
+  create(dto: CreateTeam): Observable<Team> {
     return this.api.post<Team>(`teams`, dto);
+  }
+
+  update(id: number, dto: CreateTeam): Observable<Team> {
+    return this.api.put<Team>(`teams/${id}`, dto);
   }
 
   addAgent(teamId: number, agentId: number): Observable<void> {
     return this.api.post<void>(`teams/${teamId}/add-agent`, agentId);
   }
 
-  removeAgentFromTeam(teamId: number, agentId: number): Observable<void> {
+  /** Removes an agent from this team (does not delete the agent). */
+  removeAgent(teamId: number, agentId: number): Observable<void> {
     return this.api.post<void>(`teams/${teamId}/remove-agent`, agentId);
   }
 
@@ -31,3 +40,4 @@ export class TeamService {
     return this.api.delete<void>(`teams/${teamId}`);
   }
 }
+

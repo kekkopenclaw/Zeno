@@ -116,6 +116,7 @@ type Status = (typeof PIPELINE)[number]['status'];
             <div cdkDrag class="task-card" [style.border-left-color]="priorityColor(task.priority)">
               <!-- Drag handle indicator -->
               <div cdkDragHandle class="drag-handle">⠿</div>
+              <button class="task-delete-btn" (click)="deleteTask(task); $event.stopPropagation()" title="Delete task" data-testid="delete-task-btn">🗑</button>
               <div class="task-title">{{task.title}}</div>
               @if (task.description) {
                 <div class="task-desc">{{task.description | slice:0:72}}{{task.description.length > 72 ? '…' : ''}}</div>
@@ -251,6 +252,8 @@ type Status = (typeof PIPELINE)[number]['status'];
       transition: box-shadow 0.12s, border-color 0.12s;
     }
     .task-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.4); border-color: var(--border-bright); }
+    .task-delete-btn { position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;opacity:0;font-size:14px;color:var(--text-muted);padding:2px 4px;border-radius:4px;transition:opacity 0.15s; }
+    .task-card:hover .task-delete-btn { opacity:1; }
     .drag-handle {
       position: absolute; right: 6px; top: 8px;
       color: var(--text-muted); font-size: 12px; cursor: grab;
@@ -358,6 +361,14 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   patchNewTask(field: string, value: string): void {
     this.newTask.update(t => ({ ...t, [field]: value }));
+  }
+
+  deleteTask(task: TaskItem): void {
+    this.svc.delete(task.id).subscribe({
+      next: () => {
+        this.allTasks.update(all => all.filter(t => t.id !== task.id));
+      }
+    });
   }
 
   addTask(): void {
