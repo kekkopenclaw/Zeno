@@ -7,7 +7,7 @@ export const routes: Routes = [
   { path: 'agents',    loadComponent: () => import('./features/agents/agents.component').then(m => m.AgentsComponent) },
   { path: 'projects',  loadComponent: () => import('./features/projects/projects.component').then(m => m.ProjectsComponent) },
   { path: 'memory',    loadComponent: () => import('./features/memory/memory.component').then(m => m.MemoryComponent) },
-  { path: 'logs',     loadComponent: () => import('./features/logs/logs.component').then(m => m.LogsComponent) },
+  { path: 'logs',     loadComponent: () => import('./features/activity-logs/logs-page.component').then(m => m.LogsPageComponent) },
   { path: 'people',    loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
   { path: 'team',      loadComponent: () => import('./features/people/people.component').then(m => m.PeopleComponent) },
   { path: 'calendar',  loadComponent: () => import('./features/calendar/calendar.component').then(m => m.CalendarComponent) },

@@ -54,23 +54,6 @@ public class OrchestratorService
         var now = DateTime.UtcNow;
         var tickCorrelationId = Guid.NewGuid().ToString("N");
 
-        // Dynamic mapping: stage → agent role (should be loaded from config/db in a real system)
-        var stageToRole = new Dictionary<TaskItemStatus, string> {
-            { TaskItemStatus.Orchestration, "Orchestrator" },
-            { TaskItemStatus.Architecture, "Architect" },
-            { TaskItemStatus.Tooling, "Tooling" },
-            { TaskItemStatus.Coding, "Coder" },
-            { TaskItemStatus.Refactoring, "Refactorer" },
-            { TaskItemStatus.Security, "Security" },
-            { TaskItemStatus.Testing, "Tester" },
-            { TaskItemStatus.Review, "Reviewer" },
-            { TaskItemStatus.Compliance, "Compliance" },
-            { TaskItemStatus.Release, "Release" },
-            { TaskItemStatus.Memory, "Memory" },
-            { TaskItemStatus.Enforcement, "Enforcement" },
-            { TaskItemStatus.Oversight, "Oversight" }
-        };
-
         // 0. Todo → Decomposition (if big/complex) or Orchestration (if small)
         foreach (var todoTask in allTasks.Where(t => t.Status == TaskItemStatus.Todo))
         {
@@ -87,16 +70,15 @@ public class OrchestratorService
             }
 
             // Dynamic: get orchestrator agent for this project
-            string orchestratorRole = stageToRole[TaskItemStatus.Orchestration];
-            var orchestrator = agents.FirstOrDefault(a => a.Description.Contains(orchestratorRole, StringComparison.OrdinalIgnoreCase) && a.Status == AgentStatus.Idle);
+            var orchestrator = agents.FirstOrDefault(a => a.Role == AgentRole.Whis && a.Status == AgentStatus.Idle);
             if (orchestrator == null)
             {
                 // Always attempt to create agent and workspace via OpenClawRunner
                 var createDto = new {
-                    Name = orchestratorRole,
-                    Role = orchestratorRole,
+                    Name = "Whis",
+                    Role = nameof(AgentRole.Whis),
                     Model = "gpt-4o-mini",
-                    Description = $"Auto-created agent for role {orchestratorRole}",
+                    Description = "Auto-created Whis orchestrator",
                     Skills = "",
                     Emoji = "🤖",
                     ProjectId = todoTask.ProjectId,
@@ -106,11 +88,11 @@ public class OrchestratorService
                 };
                 await _agentService.CreateAsync((dynamic)createDto);
                 agents = await _agentRepository.GetByProjectIdAsync(projectId);
-                orchestrator = agents.FirstOrDefault(a => a.Description.Contains(orchestratorRole, StringComparison.OrdinalIgnoreCase) && a.Status == AgentStatus.Idle);
+                orchestrator = agents.FirstOrDefault(a => a.Role == AgentRole.Whis && a.Status == AgentStatus.Idle);
             }
             if (orchestrator != null && _openClawRunner != null)
             {
-                var openClawId = orchestrator.Name.ToLowerInvariant();
+                var openClawId = ResolveAgentRuntimeName(orchestrator);
                 var workspacePath = await _openClawRunner.GetWorkspacePathAsync(openClawId) ?? System.IO.Path.Combine(_openClawRunner.WorkspaceRoot, openClawId);
                 await _openClawRunner.SpawnAgentAsync(openClawId, orchestrator.Model, workspacePath);
                 var exists = await _openClawRunner.AgentExistsAsync(openClawId);
@@ -141,6 +123,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, todoTask.AssignedAgentId,
                     $"🧙‍♂️ '{todoTask.Title}' started Orchestration.", todoTask,
                     action: "Todo→Orchestration", agentName: orchestrator.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(todoTask, agents, "orchestration", tickCorrelationId);
             }
         }
 
@@ -217,6 +200,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, orchTask.AssignedAgentId,
                     $"😼 '{orchTask.Title}' started Architecture.", orchTask,
                     action: "Orchestration→Architecture", agentName: architect.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(orchTask, agents, "architecture", tickCorrelationId);
             }
         }
 
@@ -246,6 +230,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, archTask.AssignedAgentId,
                     $"👩‍🔬 '{archTask.Title}' started Tooling.", archTask,
                     action: "Architecture→Tooling", agentName: bulma.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(archTask, agents, "tooling", tickCorrelationId);
             }
         }
 
@@ -275,6 +260,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, toolingTask.AssignedAgentId,
                     $"🦸‍♂️ '{toolingTask.Title}' started Coding.", toolingTask,
                     action: "Tooling→Coding", agentName: coder.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(toolingTask, agents, "coding", tickCorrelationId);
             }
         }
 
@@ -319,6 +305,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, codingTask.AssignedAgentId,
                     $"🌿 {piccolo?.Name ?? "Piccolo"} is refactoring '{codingTask.Title}'.", codingTask,
                     action: "Coding→Refactoring", agentName: piccolo?.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(codingTask, agents, "refactoring", tickCorrelationId);
             }
         }
 
@@ -355,7 +342,7 @@ public class OrchestratorService
             }
             if (cell != null && _openClawRunner != null)
             {
-                var openClawId = cell.Name.ToLowerInvariant();
+                var openClawId = ResolveAgentRuntimeName(cell);
                 var workspacePath = await _openClawRunner.GetWorkspacePathAsync(openClawId) ?? System.IO.Path.Combine(_openClawRunner.WorkspaceRoot, openClawId);
                 await _openClawRunner.SpawnAgentAsync(openClawId, cell.Model, workspacePath);
                 var exists = await _openClawRunner.AgentExistsAsync(openClawId);
@@ -385,6 +372,7 @@ public class OrchestratorService
                     await LogAndNotify(projectId, refactorTask.AssignedAgentId,
                         $"🦗 '{refactorTask.Title}' started Security Audit.", refactorTask,
                         action: "Refactoring→Security", agentName: cell.Name, correlationId: tickCorrelationId);
+                    await DispatchAssignedAgentAsync(refactorTask, agents, "security", tickCorrelationId);
                 }
             }
         }
@@ -415,6 +403,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, secTask.AssignedAgentId,
                     $"🧑‍🦲 '{secTask.Title}' started Testing.", secTask,
                     action: "Security→Testing", agentName: dende.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(secTask, agents, "testing", tickCorrelationId);
             }
         }
 
@@ -444,6 +433,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, testTask.AssignedAgentId,
                     $"👦 '{testTask.Title}' started Review.", testTask,
                     action: "Testing→Review", agentName: gohan.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(testTask, agents, "review", tickCorrelationId);
             }
         }
 
@@ -473,6 +463,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, reviewTask.AssignedAgentId,
                     $"👽 '{reviewTask.Title}' started Compliance.", reviewTask,
                     action: "Review→Compliance", agentName: jaco.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(reviewTask, agents, "compliance", tickCorrelationId);
             }
         }
 
@@ -502,6 +493,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, compTask.AssignedAgentId,
                     $"🐉 '{compTask.Title}' started Release.", compTask,
                     action: "Compliance→Release", agentName: shenron.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(compTask, agents, "release", tickCorrelationId);
             }
         }
 
@@ -531,6 +523,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, relTask.AssignedAgentId,
                     $"💾 '{relTask.Title}' started Memory/Documentation.", relTask,
                     action: "Release→Memory", agentName: trunks.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(relTask, agents, "memory", tickCorrelationId);
             }
         }
 
@@ -560,6 +553,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, memTask.AssignedAgentId,
                     $"💪 '{memTask.Title}' started Enforcement.", memTask,
                     action: "Memory→Enforcement", agentName: jiren.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(memTask, agents, "enforcement", tickCorrelationId);
             }
         }
 
@@ -589,6 +583,7 @@ public class OrchestratorService
                 await LogAndNotify(projectId, enfTask.AssignedAgentId,
                     $"👑 '{enfTask.Title}' started Oversight.", enfTask,
                     action: "Enforcement→Oversight", agentName: zeno.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(enfTask, agents, "oversight", tickCorrelationId);
             }
         }
 
@@ -603,6 +598,9 @@ public class OrchestratorService
                 await _agentRepository.UpdateAsync(zeno);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(zeno));
             }
+            if (zeno != null && !await HasCompletionEvidenceAsync(overTask, zeno, "oversight"))
+                continue;
+
             await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(overTask, zeno ?? new Agent { Name = "Unknown", Role = AgentRole.Zeno }, "done");
             overTask.Status = TaskItemStatus.Done;
             overTask.StatusEnteredAt = now;
@@ -763,21 +761,16 @@ public class OrchestratorService
 
         try
         {
-            // Use agent.Name for OpenClaw agent registration and workspace
-            var agentName = agent.Name;
+            var agentName = ResolveAgentRuntimeName(agent);
             var model = string.IsNullOrWhiteSpace(agent.Model) ? "github-copilot/gpt-4.1" : agent.Model;
 
             // Ensure agent is registered in OpenClaw; pass the log path as workspace base
-            if (string.IsNullOrEmpty(agent.OpenClawAgentId))
-            {
-                var logPath = _openClawRunner.GetLogPath(agentName);
-                // Workspace root is the parent directory of the log path
-                var ws = Path.GetDirectoryName(logPath) ?? logPath;
-                await _openClawRunner.SpawnAgentAsync(agentName, model, ws);
-            }
+            var ws = await _openClawRunner.GetWorkspacePathAsync(agentName)
+                ?? Path.Combine(_openClawRunner.WorkspaceRoot, agentName);
+            await _openClawRunner.SpawnAgentAsync(agentName, model, ws);
 
             // Build a task-specific prompt based on the agent role
-            var prompt = BuildAgentPrompt(agent, task);
+            var prompt = BuildAgentPrompt(agent, task) + $"\nCorrelationId: {correlationId}";
             await _openClawRunner.TriggerTaskAsync(agentName, prompt);
         }
         catch
@@ -807,6 +800,49 @@ public class OrchestratorService
         return $"{roleContext} [{task.Id}] {task.Title}. {task.Description}. Priority: {task.Priority}. Complexity: {task.ComplexityScore}/10.";
     }
 
+    private static string ResolveAgentRuntimeName(Agent agent)
+    {
+        if (!string.IsNullOrWhiteSpace(agent.OpenClawAgentId))
+            return agent.OpenClawAgentId;
+
+        var sanitized = string.Concat(agent.Name.ToLowerInvariant().Replace(" ", "-")
+            .Where(c => char.IsLetterOrDigit(c) || c == '-'));
+        return $"mc-{agent.Id}-{sanitized}";
+    }
+
+    private async Task DispatchAssignedAgentAsync(TaskItem task, IReadOnlyList<Agent> agents, string stage, string correlationId)
+    {
+        if (!task.AssignedAgentId.HasValue) return;
+
+        var assigned = agents.FirstOrDefault(a => a.Id == task.AssignedAgentId.Value);
+        if (assigned == null || assigned.ExecutionBackend != ExecutionBackend.OpenClaw || _openClawRunner == null)
+            return;
+
+        await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(task, assigned, stage);
+        await SpawnOrTriggerAgentAsync(assigned, task, correlationId);
+    }
+
+    private async Task<bool> HasCompletionEvidenceAsync(TaskItem task, Agent? agent, string stage)
+    {
+        if (_openClawRunner == null || agent == null) return false;
+
+        var runtimeName = ResolveAgentRuntimeName(agent);
+        var workspace = await _openClawRunner.GetWorkspacePathAsync(runtimeName)
+                        ?? Path.Combine(_openClawRunner.WorkspaceRoot, runtimeName);
+        var workspaceExists = Directory.Exists(workspace) &&
+                              Directory.EnumerateFileSystemEntries(workspace, "*", SearchOption.AllDirectories).Any();
+
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var handoffDir = Path.Combine(home, ".openclaw", "shared", task.ProjectId.ToString(), "handoff");
+        var handoffExists = Directory.Exists(handoffDir) &&
+                            Directory.EnumerateFiles(handoffDir, $"task-{task.Id}-{stage}-*.md").Any();
+
+        var logFile = Path.Combine(home, ".openclaw", "logs", $"{runtimeName}.log");
+        var logExists = File.Exists(logFile);
+
+        return workspaceExists || handoffExists || logExists;
+    }
+
     /// <summary>
     /// Creates a structured long-term memory entry when a task is completed.
     /// Format: task_id, problem, fix, lesson learned.
@@ -815,12 +851,12 @@ public class OrchestratorService
     {
         public static async Task WriteAgentHandoffFileAsync(TaskItem task, Agent agent, string stage)
         {
-            // Write to /Users/kekko/.openclaw/shared/{projectId}/handoff/task-{task.Id}-{stage}-{task.Status}.md
-            var sharedRoot = "/Users/kekko/.openclaw/shared";
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var sharedRoot = Path.Combine(home, ".openclaw", "shared");
             var dir = Path.Combine(sharedRoot, task.ProjectId.ToString(), "handoff");
             Directory.CreateDirectory(dir);
             var file = Path.Combine(dir, $"task-{task.Id}-{stage}-{task.Status}.md");
-            var content = $"# Handoff: {stage} ({task.Status})\nAgent: {agent.Name} ({agent.Role})\nTask: {task.Title}\nStatus: {task.Status}\n---\nOutput: (agent output here)\n";
+            var content = $"# Handoff: {stage} ({task.Status})\nAgent: {agent.Name} ({agent.Role})\nTask: {task.Title}\nStatus: {task.Status}\nTimestampUtc: {DateTime.UtcNow:O}\n---\nOutput: agent execution dispatched\n";
             await File.WriteAllTextAsync(file, content);
         }
     }
