@@ -71,3 +71,4 @@ agents/main/agent/auth-state.json
 *.sqlite
 agents/main/agent/auth-state.json
 cron/runs/
+.dll

@@ -30,8 +30,8 @@
     "lastRunMode": "local"
   },
   "meta": {
-    "lastTouchedVersion": "2026.4.15",
-    "lastTouchedAt": "2026-04-18T20:23:55.526Z"
+    "lastTouchedVersion": "2026.4.10",
+    "lastTouchedAt": "2026-04-19T14:28:31.395Z"
   },
   "auth": {
     "profiles": {
@@ -76,7 +76,7 @@
     "profile": "full",
     "exec": {
       "security": "full",
-      "ask": "always"
+      "ask": "off"
     }
   },
   "channels": {
@@ -128,9 +128,6 @@
   "plugins": {
     "entries": {
       "github-copilot": {
-        "enabled": true
-      },
-      "browser": {
         "enabled": true
       }
     }

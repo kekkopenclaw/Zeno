@@ -14,7 +14,6 @@ public class OrchestratorService
     private readonly ITaskRepository _taskRepository;
     private readonly IAgentRepository _agentRepository;
     private readonly IActivityLogRepository _logRepository;
-    private readonly IMemoryRepository _memoryRepository;
     private readonly ISignalRNotifier _notifier;
     private readonly ILogService _logService;
     private readonly IOpenClawRunner? _openClawRunner;
@@ -28,7 +27,7 @@ public class OrchestratorService
         ITaskRepository taskRepository,
         IAgentRepository agentRepository,
         IActivityLogRepository logRepository,
-        IMemoryRepository memoryRepository,
+
         ISignalRNotifier notifier,
         ILogService logService,
         IOpenClawRunner? openClawRunner = null)
@@ -36,7 +35,6 @@ public class OrchestratorService
         _taskRepository = taskRepository;
         _agentRepository = agentRepository;
         _logRepository = logRepository;
-        _memoryRepository = memoryRepository;
         _notifier = notifier;
         _logService = logService;
         _openClawRunner = openClawRunner;
@@ -803,53 +801,6 @@ public class OrchestratorService
     /// Creates a structured long-term memory entry when a task is completed.
     /// Format: task_id, problem, fix, lesson learned.
     /// </summary>
-    private async Task WriteTaskMemoryAsync(TaskItem task, int projectId, string? agentName)
-    {
-        try
-        {
-            var content = $"""
-                task_id: {task.Id}
-                problem: {task.Title}
-                description: {task.Description}
-                fix: Task completed after {task.RetryCount} retries and {task.ReviewFailCount} review cycles.
-                agent: {agentName ?? "unknown"}
-                complexity: {task.ComplexityScore}/10
-                lesson: {(task.RetryCount == 1
-                    ? $"Task required 1 retry — consider breaking into smaller units."
-                    : task.RetryCount > 1
-                        ? $"Task required {task.RetryCount} retries — consider breaking into smaller units."
-                        : "Task completed cleanly on first attempt.")}
-                """;
-
-            var memory = new MemoryEntry
-            {
-                ProjectId = projectId,
-                Title     = $"Completed: {task.Title}",
-                Content   = content,
-                Type      = MemoryType.LongTerm,
-                Tags      = $"task-{task.Id},completed,{task.Priority.ToString().ToLower()}",
-                AgentId   = task.AssignedAgentId,
-                CreatedAt = DateTime.UtcNow,
-            };
-            var saved = await _memoryRepository.AddAsync(memory);
-            await _notifier.NotifyMemoryAdded(new MemoryEntryDto
-            {
-                Id        = saved.Id,
-                ProjectId = saved.ProjectId,
-                Title     = saved.Title,
-                Content   = saved.Content,
-                Type      = saved.Type.ToString(),
-                Tags      = saved.Tags,
-                CreatedAt = saved.CreatedAt,
-                AgentId   = saved.AgentId,
-            });
-        }
-        catch
-        {
-            // Memory write is best-effort — never crash the orchestration loop
-        }
-    }
-
     public static class OrchestratorServiceUtils
     {
         public static async Task WriteAgentHandoffFileAsync(TaskItem task, Agent agent, string stage)

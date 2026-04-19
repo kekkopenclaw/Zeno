@@ -31,8 +31,6 @@ public class AppDbContext : DbContext
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Team> Teams => Set<Team>();
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
-    public DbSet<MemoryEntry> MemoryEntries => Set<MemoryEntry>();
-    public DbSet<MemorySummary> MemorySummaries => Set<MemorySummary>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
     public DbSet<LogEntry> Logs => Set<LogEntry>();
 
@@ -91,41 +89,6 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
-        modelBuilder.Entity<MemoryEntry>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Title).IsRequired().HasMaxLength(300);
-            entity.Property(e => e.Confidence).HasDefaultValue(0.5);
-            entity.Property(e => e.UsageCount).HasDefaultValue(0);
-            entity.Property(e => e.SuccessRate).HasDefaultValue(0.5);
-            entity.Property(e => e.LastUsed);
-            entity.Property(e => e.IsRule).HasDefaultValue(false);
-            entity.Property(e => e.Confidence).HasDefaultValue(0.5);
-            entity.Property(e => e.UsageCount).HasDefaultValue(0);
-            entity.Property(e => e.SuccessRate).HasDefaultValue(0.5);
-            entity.Property(e => e.IsRule).HasDefaultValue(false);
-            entity.HasOne(e => e.Project)
-                .WithMany(p => p.MemoryEntries)
-                .HasForeignKey(e => e.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(e => e.Agent)
-                .WithMany()
-                .HasForeignKey(e => e.AgentId)
-                .OnDelete(DeleteBehavior.SetNull);
-        });
-        modelBuilder.Entity<MemorySummary>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Problem).IsRequired().HasMaxLength(1000);
-            entity.Property(e => e.Fix).HasMaxLength(2000);
-            entity.Property(e => e.Lesson).HasMaxLength(1000);
-            entity.Property(e => e.AgentRole).HasMaxLength(50);
-            entity.HasOne(e => e.Project)
-                .WithMany(p => p.MemorySummaries)
-                .HasForeignKey(e => e.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<ActivityLog>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -165,10 +128,6 @@ public class AppDbContext : DbContext
             CreatedAt = epoch
         });
 
-        // All 8 DBZ-named agents seeded with real installed model IDs.
-        // Ollama (http://127.0.0.1:11434) — fast local inference, no tool calling.
-        //   Installed: llama3, qwen2.5-coder:14b-instruct-q4_K_M
-        // OpenClaw — advanced agent runner with tools, skills, memory, plugins.
         modelBuilder.Entity<Agent>().HasData(
             new Agent { Id = 1, Name = "Whis",    Model = "llama3",                              ExecutionBackend = ExecutionBackend.OpenClaw,    ToolsEnabled = false, PushRole = false, Role = AgentRole.Whis,     Status = AgentStatus.Idle, Emoji = "🌀", Description = "Orchestrator — routes tasks, manages state machine, handles retries", Skills = "Orchestration,Routing,Escalation",                ProjectId = 1 },
             new Agent { Id = 2, Name = "Beerus",  Model = "qwen2.5-coder:14b-instruct-q4_K_M",  ExecutionBackend = ExecutionBackend.OpenClaw,  ToolsEnabled = true,  PushRole = false, Role = AgentRole.Beerus,   Status = AgentStatus.Idle, Emoji = "😼", Description = "Architect — high-level system design and decisions",                   Skills = "Architecture,SystemDesign,Planning",             ProjectId = 1 },
@@ -194,16 +153,6 @@ public class AppDbContext : DbContext
             new TaskItem { Id = 4, Title = "Build Angular dashboard real-time feed",        Description = "SignalR-connected live agent activity feed",                       Status = TaskItemStatus.Todo,    Priority = TaskPriority.High,     ProjectId = 1,       CreatedAt = epoch.AddDays(3), ComplexityScore = 4 },
             new TaskItem { Id = 5, Title = "Add context caching to ContextLoader",         Description = "Cache SOUL and AGENTS context to avoid prompt bloat",             Status = TaskItemStatus.Tooling,   Priority = TaskPriority.Medium,   AssignedAgentId = 8, ProjectId = 1, CreatedAt = epoch.AddDays(4), ComplexityScore = 3 },
             new TaskItem { Id = 6, Title = "Implement learning service (Trunks)",          Description = "Analyze past summaries and refine routing weights",               Status = TaskItemStatus.Architecture, Priority = TaskPriority.Medium,   ProjectId = 1,       CreatedAt = epoch.AddDays(5), ComplexityScore = 7 }
-        );
-
-        modelBuilder.Entity<MemoryEntry>().HasData(
-            new MemoryEntry { Id = 1, ProjectId = 1, Title = "Architecture Decision: Event-Driven Agents",  Content = "We will use strict state-machine driven execution. Only status transitions trigger agent actions. No polling loops.",                     Type = MemoryType.Decision, Tags = "architecture,state-machine,agents", CreatedAt = epoch },
-            new MemoryEntry { Id = 2, ProjectId = 1, Title = "Performance Insight: Prompt Bloat",           Content = "Injecting .md files into every prompt increased token usage 3×. Switched to ContextLoader with caching. 70% reduction in token spend.", Type = MemoryType.Insight,  Tags = "performance,prompts,context",       CreatedAt = epoch.AddDays(1), AgentId = 7 },
-            new MemoryEntry { Id = 3, ProjectId = 1, Title = "Memory Refactor Decision",                    Content = "Store only structured summaries: {task_id, problem, fix, lesson}. Never store raw conversation history.",                               Type = MemoryType.Decision, Tags = "memory,summaries,structured",       CreatedAt = epoch.AddDays(2), AgentId = 7 }
-        );
-
-        modelBuilder.Entity<MemorySummary>().HasData(
-            new MemorySummary { Id = 1, ProjectId = 1, TaskItemId = 1, Problem = "Agent communication was polling-based and inefficient", Fix = "Implemented SignalR hub with typed methods per event type", Lesson = "Event-driven beats polling — always push, never pull", AgentRole = "Beerus", RetriesRequired = 0, ComplexityScore = 9, CreatedAt = epoch.AddDays(1) }
         );
 
         modelBuilder.Entity<ActivityLog>().HasData(

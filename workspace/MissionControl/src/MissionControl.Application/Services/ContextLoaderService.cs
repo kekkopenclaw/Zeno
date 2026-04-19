@@ -25,12 +25,6 @@ public class ContextLoaderService
         """;
 
     private static readonly Dictionary<string, string> _standardsCache = new(StringComparer.OrdinalIgnoreCase);
-    private readonly IMemoryRepository _memoryRepository;
-
-    public ContextLoaderService(IMemoryRepository memoryRepository)
-    {
-        _memoryRepository = memoryRepository;
-    }
 
     /// <summary>Returns minimal cached core identity — always fast</summary>
     public string GetCoreContext() => _soulContext;

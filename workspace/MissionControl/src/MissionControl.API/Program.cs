@@ -1,6 +1,6 @@
 using MissionControl.Infrastructure;
 using MissionControl.Infrastructure.Data;
-using MissionControl.Infrastructure.Hubs;
+
 using MissionControl.Application.Services;
 using MissionControl.API.Middleware;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +64,7 @@ builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<AgentService>();
 builder.Services.AddScoped<TaskService>();
-builder.Services.AddScoped<MemoryService>();
+
 builder.Services.AddScoped<ActivityLogService>();
 var app = builder.Build();
 
@@ -91,7 +91,7 @@ app.UseCors();
 app.UseSerilogRequestLogging();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<AgentHub>("/hubs/agent");
+
 
 app.Run();
 }

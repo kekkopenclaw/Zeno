@@ -4,6 +4,10 @@
     "path": "/Users/kekko/.openclaw/exec-approvals.sock",
     "token": "b58MOEmQQ30WTi2c3M1pbmaWHyd7KxbN"
   },
-  "defaults": {},
+  "defaults": {
+    "security": "full",
+    "ask": "off",
+    "askFallback": "full"
+  },
   "agents": {}
 }
