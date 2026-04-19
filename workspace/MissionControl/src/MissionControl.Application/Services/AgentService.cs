@@ -93,6 +93,8 @@ public class AgentService
         agent.PushRole         = dto.PushRole;
         agent.Color            = dto.Color;
         await _repository.UpdateAsync(agent);
+        if (_notifier != null)
+            await _notifier.NotifyAgentUpdatedAsync(MapToDto(agent));
         return MapToDto(agent);
     }
 

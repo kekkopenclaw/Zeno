@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MissionControl.Application.DTOs;
 using MissionControl.Application.Services;
-using MissionControl.Domain.Entities;
 
 namespace MissionControl.API.Controllers;
 
@@ -23,11 +22,32 @@ public class TeamsController : ControllerBase
         return Ok(teams);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var team = await _teamService.GetByIdAsync(id);
+        return team == null ? NotFound() : Ok(team);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTeamDto dto)
     {
         var team = await _teamService.CreateAsync(dto);
-        return Ok(team);
+        return CreatedAtAction(nameof(GetById), new { id = team.Id }, team);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CreateTeamDto dto)
+    {
+        var result = await _teamService.UpdateAsync(id, dto);
+        return result == null ? NotFound() : Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _teamService.DeleteAsync(id);
+        return success ? NoContent() : NotFound();
     }
 
     [HttpPost("{teamId}/add-agent")]

@@ -33,4 +33,16 @@ public class TeamRepository : ITeamRepository
     {
         return await _db.Agents.Where(a => a.TeamId == teamId).ToListAsync();
     }
+
+    public async Task UpdateAsync(Team team)
+    {
+        _db.Teams.Update(team);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Team team)
+    {
+        _db.Teams.Remove(team);
+        await _db.SaveChangesAsync();
+    }
 }

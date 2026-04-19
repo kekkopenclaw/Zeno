@@ -8,4 +8,6 @@ public interface ITeamRepository
     Task AddAsync(Team team);
     Task<Team?> GetByIdAsync(int teamId);
     Task<IEnumerable<Agent>> GetAgentsAsync(int teamId);
+    Task UpdateAsync(Team team);
+    Task DeleteAsync(Team team);
 }
