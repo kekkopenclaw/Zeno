@@ -407,6 +407,7 @@ export class App implements OnInit, OnDestroy {
         { path: '/memory',    label: 'Memory',    icon: '💾' },
         { path: '/logs',      label: 'Logs',      icon: '📊' },
         { path: '/people',    label: 'People',    icon: '👥' },
+        { path: '/teams',     label: 'Teams',     icon: '🤝' },
         { path: '/office',    label: 'Office',    icon: '🏢' },
         { path: '/team',      label: 'Team',      icon: '🌐' },
       ],

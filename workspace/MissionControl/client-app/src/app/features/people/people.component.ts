@@ -2,13 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { AgentService } from '../../core/services/agent.service';
 import { AgentCreateModalComponent } from '../dashboard/agent-create-modal.component';
 import { AgentDeleteModalComponent } from '../dashboard/agent-delete-modal.component';
+import { AgentEditModalComponent } from '../agents/agent-edit-modal.component';
 import { CommonModule } from '@angular/common';
 import type { Agent } from '../../core/models';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [CommonModule, AgentCreateModalComponent, AgentDeleteModalComponent],
+  imports: [CommonModule, AgentCreateModalComponent, AgentDeleteModalComponent, AgentEditModalComponent],
   template: `
 <div class="team-page" data-testid="people-page">
   <!-- Mission banner -->
@@ -42,6 +43,15 @@ import type { Agent } from '../../core/models';
   (close)="cancelDelete()">
 </app-agent-delete-modal>
 
+@if (showEditModal) {
+  <app-agent-edit-modal
+    [agent]="agentToEdit!"
+    [availableModels]="availableModels"
+    (saved)="onAgentSaved($event)"
+    (close)="closeEdit()">
+  </app-agent-edit-modal>
+}
+
   @if (hero(); as h) {
     <!-- Hero agent card (Whis) -->
     <div class="hero-card">
@@ -58,7 +68,10 @@ import type { Agent } from '../../core/models';
           </div>
         </div>
       </div>
-      <div class="hero-footer">ROLE CARD →</div>
+      <div class="hero-footer" style="display:flex;justify-content:space-between;align-items:center;">
+        <button class="btn btn-sm" (click)="openEdit(h)" style="font-size:11px;" data-testid="edit-hero-btn">✏️ Edit</button>
+        <span>ROLE CARD →</span>
+      </div>
     </div>
   }
 
@@ -74,6 +87,7 @@ import type { Agent } from '../../core/models';
     @for (a of subAgents(); track a.id) {
       <div class="sub-card team-agent-card" style="position:relative; background: var(--bg-elevated); border-radius: 16px; border: 1.5px solid var(--border); box-shadow: 0 1px 4px rgba(34,34,38,0.04); padding: 20px 16px 16px 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;">
         <button class="remove-agent-btn" title="Remove agent" (click)="removeAgent(a)">×</button>
+        <button class="edit-agent-btn" title="Edit agent" (click)="openEdit(a)" data-testid="edit-sub-agent-btn">✏️</button>
         <div class="flex items-center gap-3 w-full">
           <div class="team-avatar"
                [style.background]="'linear-gradient(135deg, ' + roleColor(a.role) + '22, ' + roleColor(a.role) + '44)'"
@@ -280,11 +294,36 @@ import type { Agent } from '../../core/models';
       background: var(--bg-hover);
       color: var(--text-primary);
     }
+    .edit-agent-btn {
+      position: absolute;
+      top: 8px;
+      right: 34px;
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .edit-agent-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
   `]
 })
 export class PeopleComponent implements OnInit {
   agentToDelete: Agent | null = null;
   showDeleteModal = false;
+  agentToEdit: Agent | null = null;
+  showEditModal = false;
 
   removeAgent(agent: Agent) {
     this.agentToDelete = agent;
@@ -310,6 +349,24 @@ export class PeopleComponent implements OnInit {
   cancelDelete() {
     this.showDeleteModal = false;
     this.agentToDelete = null;
+  }
+
+  openEdit(agent: Agent): void {
+    this.agentToEdit = agent;
+    this.showEditModal = true;
+  }
+
+  closeEdit(): void {
+    this.showEditModal = false;
+    this.agentToEdit = null;
+  }
+
+  onAgentSaved(patch: Partial<Agent>): void {
+    const id = patch.id;
+    if (!id) return;
+    this.svc.update(id, patch).subscribe({
+      next: () => this.svc.getAll().subscribe(d => this.agents.set(d)),
+    });
   }
   modalKey = 0;
   openModal() {
