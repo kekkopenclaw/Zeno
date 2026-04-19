@@ -8,7 +8,7 @@ public class Agent
     public string Name { get; set; } = string.Empty;
     public string Model { get; set; } = string.Empty;
     public AgentStatus Status { get; set; } = AgentStatus.Idle;
-    public AgentRole Role { get; set; } = AgentRole.Kakarot;
+    public string Role { get; set; } = string.Empty; // dynamic agent role
     public string Description { get; set; } = string.Empty;
     public string Skills { get; set; } = string.Empty;
     public string Emoji { get; set; } = "🤖";

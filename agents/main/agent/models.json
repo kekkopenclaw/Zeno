@@ -1,7 +1,7 @@
 {
   "providers": {
     "codex": {
-      "baseUrl": "https://chatgpt.com/backend-api",
+      "baseUrl": "https://chatgpt.com/backend-api/v1",
       "apiKey": "codex-app-server",
       "auth": "token",
       "api": "openai-codex-responses",
@@ -75,24 +75,8 @@
       ]
     },
     "github-copilot": {
-      "baseUrl": "https://api.individual.githubcopilot.com",
+      "baseUrl": "https://api.individual.githubcopilot.com/v1",
       "models": []
-    },
-    "openai": {
-      "api": "openai-completions",
-      "baseUrl": "https://nvidia.com",
-      "apiKey": "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",
-      "request": {
-        "allowPrivateNetwork": true
-      },
-      "models": [
-        {
-          "id": "minimaxai/minimax-m2.7",
-          "name": "NVIDIA MiniMax M2.7",
-          "contextWindow": 128000,
-          "maxTokens": 4096
-        }
-      ]
     }
   }
 }

@@ -39,12 +39,12 @@ public class AgentService
 
     public async Task<AgentDto> CreateAsync(CreateAgentDto dto)
     {
-        var role    = Enum.TryParse<AgentRole>(dto.Role, out var r) ? r : AgentRole.Kakarot;
+        var role    = string.IsNullOrWhiteSpace(dto.Role) ? "default" : dto.Role; // dynamic role
         var backend = Enum.TryParse<ExecutionBackend>(dto.ExecutionBackend, out var b) ? b : ExecutionBackend.Ollama;
         var agent = new Agent
         {
             Name             = dto.Name,
-            Model            = dto.Model,
+            Model            = string.IsNullOrWhiteSpace(dto.Model) ? "github-copilot/gpt-4.1" : dto.Model, // configurable, fallback to default
             Role             = role,
             Description      = dto.Description,
             Skills           = dto.Skills,
@@ -78,7 +78,7 @@ public class AgentService
     {
         var agent = await _repository.GetByIdAsync(id);
         if (agent == null) return null;
-        var role    = Enum.TryParse<AgentRole>(dto.Role, out var r) ? r : AgentRole.Kakarot;
+        var role    = string.IsNullOrWhiteSpace(dto.Role) ? "default" : dto.Role; // dynamic role
         var backend = Enum.TryParse<ExecutionBackend>(dto.ExecutionBackend, out var b) ? b : ExecutionBackend.Ollama;
         agent.Name             = dto.Name;
         agent.Model            = dto.Model;
@@ -173,7 +173,7 @@ public class AgentService
         Name            = a.Name,
         Model           = a.Model,
         Status          = a.Status.ToString(),
-        Role            = a.Role.ToString(),
+        Role            = a.Role,
         Description     = a.Description,
         Skills          = a.Skills,
         Emoji           = a.Emoji,

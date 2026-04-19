@@ -66,7 +66,7 @@ public class ReviewService
         {
             // Escalate to Vegeta (advanced coder)
             var vegeta = (await _agentRepository.GetByProjectIdAsync(projectId))
-                .FirstOrDefault(a => a.Role == AgentRole.Vegeta);
+                .FirstOrDefault(a => a.Role != null && a.Role.Equals("Coder", StringComparison.OrdinalIgnoreCase));
 
             if (vegeta != null)
                 task.AssignedAgentId = vegeta.Id;
@@ -81,7 +81,7 @@ public class ReviewService
         {
             // First fail → Enforcement (Jiren)
             var jiren = (await _agentRepository.GetByProjectIdAsync(projectId))
-                .FirstOrDefault(a => a.Role == AgentRole.Jiren);
+                .FirstOrDefault(a => a.Role != null && a.Role.Equals("Enforcement", StringComparison.OrdinalIgnoreCase));
             if (jiren != null)
                 task.AssignedAgentId = jiren.Id;
             task.Status = TaskItemStatus.Enforcement;

@@ -77,33 +77,33 @@ public sealed class SwarmCoordinatorService
         if (needsTool)
         {
             // Bulma has tool access for deployments/integrations
-            executor = FindAgent(agents, AgentRole.Bulma)
+            executor = FindAgent(agents, "Tooling")
                 ?? FindByToolsEnabled(agents, true);
         }
         else if (isArchitectural)
         {
-            executor = FindAgent(agents, AgentRole.Beerus)
-                ?? FindAgent(agents, AgentRole.Vegeta);
+            executor = FindAgent(agents, "Architect")
+                ?? FindAgent(agents, "Coder");
         }
         else if (isRefactor)
         {
-            executor = FindAgent(agents, AgentRole.Piccolo)
-                ?? FindAgent(agents, AgentRole.Kakarot);
+            executor = FindAgent(agents, "Refactorer")
+                ?? FindAgent(agents, "Coder");
         }
         else if (isMemory)
         {
-            executor = FindAgent(agents, AgentRole.Trunks)
-                ?? FindAgent(agents, AgentRole.Piccolo);
+            executor = FindAgent(agents, "Memory")
+                ?? FindAgent(agents, "Refactorer");
         }
         else if (task.ComplexityScore >= 7 || task.Priority == "Critical")
         {
-            executor = FindAgent(agents, AgentRole.Vegeta)
-                ?? FindAgent(agents, AgentRole.Kakarot);
+            executor = FindAgent(agents, "Coder")
+                ?? FindAgent(agents, "Developer");
         }
         else
         {
-            executor = FindAgent(agents, AgentRole.Kakarot)
-                ?? FindAgent(agents, AgentRole.Vegeta)
+            executor = FindAgent(agents, "Developer")
+                ?? FindAgent(agents, "Coder")
                 ?? agents.Where(a => a.Status == AgentStatus.Idle).Select(a => AgentService.MapToDto(a)).FirstOrDefault();
         }
 
@@ -111,11 +111,11 @@ public sealed class SwarmCoordinatorService
             plan.Executor = executor;
 
         // ── Step 2: pick reviewer ───────────────────────────────────────────
-        plan.Reviewer = FindAgent(agents, AgentRole.Gohan)
-            ?? FindAgent(agents, AgentRole.Vegeta);
+        plan.Reviewer = FindAgent(agents, "Reviewer")
+            ?? FindAgent(agents, "Coder");
 
         // ── Step 3: pick memory agent ───────────────────────────────────────
-        plan.MemoryAgent = FindAgent(agents, AgentRole.Trunks);
+        plan.MemoryAgent = FindAgent(agents, "Memory");
 
         // ── Broadcast plan to UI ────────────────────────────────────────────
         var summary = $"🌐 Whis swarm plan for '{task.Title}': " +
@@ -141,9 +141,9 @@ public sealed class SwarmCoordinatorService
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
-    private static AgentDto? FindAgent(List<Domain.Entities.Agent> agents, AgentRole role)
+    private static AgentDto? FindAgent(List<Domain.Entities.Agent> agents, string role)
     {
-        var a = agents.FirstOrDefault(x => x.Role == role);
+        var a = agents.FirstOrDefault(x => x.Role != null && x.Role.Equals(role, StringComparison.OrdinalIgnoreCase));
         return a == null ? null : AgentService.MapToDto(a);
     }
 
