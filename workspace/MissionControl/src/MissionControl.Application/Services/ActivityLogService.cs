@@ -1,4 +1,5 @@
 using MissionControl.Application.DTOs;
+using MissionControl.Application.Interfaces;
 using MissionControl.Domain.Entities;
 using MissionControl.Domain.Interfaces;
 
@@ -7,10 +8,12 @@ namespace MissionControl.Application.Services;
 public class ActivityLogService
 {
     private readonly IActivityLogRepository _repository;
+    private readonly ISignalRNotifier? _notifier;
 
-    public ActivityLogService(IActivityLogRepository repository)
+    public ActivityLogService(IActivityLogRepository repository, ISignalRNotifier? notifier = null)
     {
         _repository = repository;
+        _notifier = notifier;
     }
 
     public async Task<IReadOnlyList<ActivityLogDto>> GetByProjectIdAsync(int projectId, int limit = 50)
@@ -35,7 +38,9 @@ public class ActivityLogService
             Timestamp = DateTime.UtcNow
         };
         var saved = await _repository.AddAsync(log);
-        return MapToDto(saved);
+        var result = MapToDto(saved);
+        if (_notifier != null) await _notifier.NotifyLogCreatedAsync(result);
+        return result;
     }
 
     private static ActivityLogDto MapToDto(ActivityLog l) => new()
