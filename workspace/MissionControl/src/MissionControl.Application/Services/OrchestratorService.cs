@@ -407,7 +407,7 @@ public class OrchestratorService
         var workspace   = await _openClawRunner.GetWorkspacePathAsync(runtimeName)
                           ?? Path.Combine(_openClawRunner.WorkspaceRoot, runtimeName);
         var workspaceExists = Directory.Exists(workspace) &&
-                              Directory.EnumerateFileSystemEntries(workspace, "*", SearchOption.AllDirectories).Any();
+                              Directory.EnumerateFileSystemEntries(workspace, "*", SearchOption.TopDirectoryOnly).Any();
         var home        = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var handoffDir  = Path.Combine(home, ".openclaw", "shared", task.ProjectId.ToString(), "handoff");
         var handoffExists = Directory.Exists(handoffDir) &&
