@@ -540,21 +540,24 @@ public class OrchestratorService
                 await _agentRepository.UpdateAsync(trunks);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(trunks));
             }
-            var jiren = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != trunks?.Id); // dynamic role-agnostic
-            if (jiren != null)
+            // Prefer the canonical Jiren (enforcement) agent; fall back to any idle agent
+            var enforcementAgent = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != trunks?.Id
+                                       && a.Role.Equals(nameof(AgentRole.Jiren), StringComparison.OrdinalIgnoreCase))
+                                   ?? agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != trunks?.Id);
+            if (enforcementAgent != null)
             {
-                await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(memTask, jiren, "enforcement");
-                memTask.AssignedAgentId = jiren.Id;
-                jiren.Status = AgentStatus.Working;
-                await _agentRepository.UpdateAsync(jiren);
-                await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(jiren));
+                await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(memTask, enforcementAgent, "enforcement");
+                memTask.AssignedAgentId = enforcementAgent.Id;
+                enforcementAgent.Status = AgentStatus.Working;
+                await _agentRepository.UpdateAsync(enforcementAgent);
+                await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(enforcementAgent));
                 memTask.Status = TaskItemStatus.Enforcement;
                 memTask.StatusEnteredAt = now;
                 memTask.UpdatedAt = now;
                 await _taskRepository.UpdateAsync(memTask);
                 await LogAndNotify(projectId, memTask.AssignedAgentId,
                     $"💪 '{memTask.Title}' started Enforcement.", memTask,
-                    action: "Memory→Enforcement", agentName: jiren.Name, correlationId: tickCorrelationId);
+                    action: "Memory→Enforcement", agentName: enforcementAgent.Name, correlationId: tickCorrelationId);
                 await DispatchAssignedAgentAsync(memTask, agents, "enforcement", tickCorrelationId);
             }
         }
