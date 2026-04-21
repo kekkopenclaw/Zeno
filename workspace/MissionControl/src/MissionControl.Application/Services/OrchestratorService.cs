@@ -245,7 +245,11 @@ public class OrchestratorService
                 await _agentRepository.UpdateAsync(bulma);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(bulma));
             }
-            var coder = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != bulma?.Id); // dynamic role-agnostic
+            // Prefer canonical coding-role agents (Kakarot, Vegeta); fall back to any idle agent
+            var coder = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != bulma?.Id
+                            && (a.Role.Equals(nameof(AgentRole.Kakarot), StringComparison.OrdinalIgnoreCase)
+                                || a.Role.Equals(nameof(AgentRole.Vegeta), StringComparison.OrdinalIgnoreCase)))
+                        ?? agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != bulma?.Id);
             if (coder != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(toolingTask, coder, "coding");
@@ -271,7 +275,7 @@ public class OrchestratorService
             Agent? coder = codingTask.AssignedAgentId.HasValue
                 ? agents.FirstOrDefault(a => a.Id == codingTask.AssignedAgentId)
                 : null;
-            if (coder == null || string.IsNullOrEmpty(coder.Role) || !(coder.Role.Equals(nameof(AgentRole.Kakarot), StringComparison.OrdinalIgnoreCase) || coder.Role.Equals(nameof(AgentRole.Vegeta), StringComparison.OrdinalIgnoreCase)))
+            if (coder == null || string.IsNullOrEmpty(coder.Role))
                 continue;
             bool agentWorkCompleted = false;
             if (isTestMode)
