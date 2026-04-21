@@ -1,11 +1,9 @@
 using MissionControl.Application.DTOs;
 using MissionControl.Application.Interfaces;
-using MissionControl.Application.Options;
 using MissionControl.Application.Services;
 using MissionControl.Domain.Entities;
 using MissionControl.Domain.Enums;
 using MissionControl.Domain.Interfaces;
-using Microsoft.Extensions.Options;
 using Moq;
 using FluentAssertions;
 
@@ -77,15 +75,6 @@ public class OrchestratorServiceTests
         logSvc.Setup(l => l.WriteAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), 
                                        It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>()))
               .Returns(Task.CompletedTask);
-
-        var config = Options.Create(new PipelineStageConfig
-        {
-            StageSkillRequirements = new Dictionary<string, List<string>>
-            {
-                ["Orchestration"] = new() { "Orchestration", "Planning" },
-                ["Coding"] = new() { "Coding", "Implementation" }
-            }
-        });
 
         var svc = new OrchestratorService(
             taskRepo.Object, agentRepo.Object, logRepo.Object,
