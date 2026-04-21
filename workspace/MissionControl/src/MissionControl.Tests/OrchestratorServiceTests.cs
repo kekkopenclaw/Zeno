@@ -33,7 +33,7 @@ public class OrchestratorServiceTests
         {
             Id       = 10,
             Name     = "Orchestrator",
-            Role     = AgentRole.Whis,
+            Role     = nameof(AgentRole.Whis),
             Skills   = "Orchestration,Planning",
             Status   = AgentStatus.Idle,
             IsPaused = false,
@@ -45,7 +45,7 @@ public class OrchestratorServiceTests
         {
             Id       = 11,
             Name     = "Coder",
-            Role     = AgentRole.Kakarot,
+            Role     = nameof(AgentRole.Kakarot),
             Skills   = "Coding,Implementation",
             Status   = AgentStatus.Idle,
             IsPaused = false,
@@ -89,7 +89,7 @@ public class OrchestratorServiceTests
 
         var svc = new OrchestratorService(
             taskRepo.Object, agentRepo.Object, logRepo.Object,
-            notifier.Object, logSvc.Object, openClawRunner: null, stageConfig: config);
+            notifier.Object, logSvc.Object, openClawRunner: null);
 
         // Act
         await svc.TickAsync(1);
