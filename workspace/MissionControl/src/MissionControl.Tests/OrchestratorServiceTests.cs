@@ -1,11 +1,9 @@
 using MissionControl.Application.DTOs;
 using MissionControl.Application.Interfaces;
-using MissionControl.Application.Options;
 using MissionControl.Application.Services;
 using MissionControl.Domain.Entities;
 using MissionControl.Domain.Enums;
 using MissionControl.Domain.Interfaces;
-using Microsoft.Extensions.Options;
 using Moq;
 using FluentAssertions;
 
@@ -33,7 +31,7 @@ public class OrchestratorServiceTests
         {
             Id       = 10,
             Name     = "Orchestrator",
-            Role     = AgentRole.Whis,
+            Role     = nameof(AgentRole.Whis),
             Skills   = "Orchestration,Planning",
             Status   = AgentStatus.Idle,
             IsPaused = false,
@@ -45,7 +43,7 @@ public class OrchestratorServiceTests
         {
             Id       = 11,
             Name     = "Coder",
-            Role     = AgentRole.Kakarot,
+            Role     = nameof(AgentRole.Kakarot),
             Skills   = "Coding,Implementation",
             Status   = AgentStatus.Idle,
             IsPaused = false,
@@ -78,18 +76,9 @@ public class OrchestratorServiceTests
                                        It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>()))
               .Returns(Task.CompletedTask);
 
-        var config = Options.Create(new PipelineStageConfig
-        {
-            StageSkillRequirements = new Dictionary<string, List<string>>
-            {
-                ["Orchestration"] = new() { "Orchestration", "Planning" },
-                ["Coding"] = new() { "Coding", "Implementation" }
-            }
-        });
-
         var svc = new OrchestratorService(
             taskRepo.Object, agentRepo.Object, logRepo.Object,
-            notifier.Object, logSvc.Object, openClawRunner: null, stageConfig: config);
+            notifier.Object, logSvc.Object, openClawRunner: null);
 
         // Act
         await svc.TickAsync(1);
