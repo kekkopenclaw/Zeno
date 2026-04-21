@@ -19,7 +19,7 @@ public class AgentServiceTests
         {
             new() 
             { 
-                Id=1, Name="Coder", Model="gpt-4o-mini", Role=AgentRole.Kakarot, 
+                Id=1, Name="Coder", Model="gpt-4o-mini", Role=nameof(AgentRole.Kakarot),
                 Status=AgentStatus.Idle, Skills="Coding,Testing", ProjectId=1 
             }
         });
@@ -44,7 +44,7 @@ public class AgentServiceTests
     public async Task DeleteAsync_ReturnsTrue_WhenAgentExists()
     {
         var repo = new Mock<IAgentRepository>();
-        var agent = new Agent { Id = 7, Name = "Del", Role = AgentRole.Gohan, Model = "m", ProjectId=1 };
+        var agent = new Agent { Id = 7, Name = "Del", Role = nameof(AgentRole.Gohan), Model = "m", ProjectId=1 };
         repo.Setup(r => r.GetByIdAsync(7)).ReturnsAsync(agent);
         repo.Setup(r => r.DeleteAsync(agent)).Returns(Task.CompletedTask);
         var svc = new AgentService(repo.Object);
@@ -70,7 +70,7 @@ public class AgentServiceTests
         {
             new() 
             { 
-                Id=1, Name="Agent1", Model="gpt-4", Role=AgentRole.Vegeta, 
+                Id=1, Name="Agent1", Model="gpt-4", Role=nameof(AgentRole.Vegeta),
                 Status=AgentStatus.Idle, Skills="Testing", ProjectId=1, ExecutionBackend=ExecutionBackend.Ollama
             }
         });
@@ -87,7 +87,7 @@ public class AgentServiceTests
         var repo = new Mock<IAgentRepository>();
         var agent = new Agent 
         { 
-            Id=5, Name="TestAgent", Model="claude-3", Role=AgentRole.Whis, 
+            Id=5, Name="TestAgent", Model="claude-3", Role=nameof(AgentRole.Whis),
             Status=AgentStatus.Working, Skills="Planning", ProjectId=2, ExecutionBackend=ExecutionBackend.Ollama
         };
         repo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(agent);
@@ -114,7 +114,7 @@ public class AgentServiceTests
         var repo = new Mock<IAgentRepository>();
         var agent = new Agent 
         { 
-            Id=3, Name="OldName", Model="gpt-3.5", Role=AgentRole.Kakarot, 
+            Id=3, Name="OldName", Model="gpt-3.5", Role=nameof(AgentRole.Kakarot),
             Status=AgentStatus.Idle, Skills="Coding", ProjectId=1, ExecutionBackend=ExecutionBackend.Ollama
         };
         repo.Setup(r => r.GetByIdAsync(3)).ReturnsAsync(agent);

@@ -208,7 +208,7 @@ public class OrchestratorService
         foreach (var archTask in allTasks.Where(t => t.Status == TaskItemStatus.Architecture))
         {
             var architect = archTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == archTask.AssignedAgentId) : null;
-            if (architect != null && architect.Role != null && architect.Role.Equals("Architect", StringComparison.OrdinalIgnoreCase)) // role-string, not character
+            if (architect != null && architect.Role.Equals(nameof(AgentRole.Beerus), StringComparison.OrdinalIgnoreCase))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(archTask, architect, "architecture");
                 architect.Status = AgentStatus.Idle;
@@ -238,7 +238,7 @@ public class OrchestratorService
         foreach (var toolingTask in allTasks.Where(t => t.Status == TaskItemStatus.Tooling))
         {
             var bulma = toolingTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == toolingTask.AssignedAgentId) : null;
-            if (bulma != null && bulma.Role != null && bulma.Role.Equals("Tooling", StringComparison.OrdinalIgnoreCase))
+            if (bulma != null && bulma.Role.Equals(nameof(AgentRole.Bulma), StringComparison.OrdinalIgnoreCase))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(toolingTask, bulma, "tooling");
                 bulma.Status = AgentStatus.Idle;
@@ -271,7 +271,7 @@ public class OrchestratorService
             Agent? coder = codingTask.AssignedAgentId.HasValue
                 ? agents.FirstOrDefault(a => a.Id == codingTask.AssignedAgentId)
                 : null;
-            if (coder == null || string.IsNullOrEmpty(coder.Role) || !(coder.Role.Equals("Coder", StringComparison.OrdinalIgnoreCase) || coder.Role.Equals("Developer", StringComparison.OrdinalIgnoreCase) || coder.Role.Equals("Engineer", StringComparison.OrdinalIgnoreCase))) // generic coder/developer
+            if (coder == null || string.IsNullOrEmpty(coder.Role) || !(coder.Role.Equals(nameof(AgentRole.Kakarot), StringComparison.OrdinalIgnoreCase) || coder.Role.Equals(nameof(AgentRole.Vegeta), StringComparison.OrdinalIgnoreCase)))
                 continue;
             bool agentWorkCompleted = false;
             if (isTestMode)
@@ -313,7 +313,7 @@ public class OrchestratorService
         foreach (var refactorTask in allTasks.Where(t => t.Status == TaskItemStatus.Refactoring))
         {
             var piccolo = refactorTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == refactorTask.AssignedAgentId) : null;
-            if (piccolo != null && piccolo.Role != null && piccolo.Role.Equals("Refactorer", StringComparison.OrdinalIgnoreCase))
+            if (piccolo != null && piccolo.Role.Equals(nameof(AgentRole.Piccolo), StringComparison.OrdinalIgnoreCase))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(refactorTask, piccolo, "refactoring");
                 piccolo.Status = AgentStatus.Idle;
@@ -321,7 +321,7 @@ public class OrchestratorService
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(piccolo));
             }
             // Ensure Cell agent exists and OpenClaw workspace is created
-            var cell = agents.FirstOrDefault(a => a.Id != piccolo?.Id && a.Id != coder?.Id && a.Id != bulma?.Id && a.Id != architect?.Id); // dynamic role-agnostic
+            var cell = agents.FirstOrDefault(a => a.Id != piccolo?.Id && a.Status == AgentStatus.Idle); // dynamic role-agnostic, prefer idle
             if (cell == null)
             {
                 var createDto = new {
@@ -381,7 +381,7 @@ public class OrchestratorService
         foreach (var secTask in allTasks.Where(t => t.Status == TaskItemStatus.Security))
         {
             var cell = secTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == secTask.AssignedAgentId) : null;
-            if (cell != null && cell.Role != null && cell.Role.Equals("Security", StringComparison.OrdinalIgnoreCase))
+            if (cell != null && cell.Role.Equals(nameof(AgentRole.Cell), StringComparison.OrdinalIgnoreCase))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(secTask, cell, "security");
                 cell.Status = AgentStatus.Idle;
@@ -411,14 +411,14 @@ public class OrchestratorService
         foreach (var testTask in allTasks.Where(t => t.Status == TaskItemStatus.Testing))
         {
             var dende = testTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == testTask.AssignedAgentId) : null;
-            if (dende != null && dende.Role != null && dende.Role.Equals("Tester", StringComparison.OrdinalIgnoreCase))
+            if (dende != null && dende.Role.Equals(nameof(AgentRole.Dende), StringComparison.OrdinalIgnoreCase))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(testTask, dende, "testing");
                 dende.Status = AgentStatus.Idle;
                 await _agentRepository.UpdateAsync(dende);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(dende));
             }
-            var gohan = agents.FirstOrDefault(a => a.Role == AgentRole.Gohan && a.Status == AgentStatus.Idle);
+            var gohan = agents.FirstOrDefault(a => a.Role == nameof(AgentRole.Gohan) && a.Status == AgentStatus.Idle);
             if (gohan != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(testTask, gohan, "review");
@@ -441,14 +441,14 @@ public class OrchestratorService
         foreach (var reviewTask in allTasks.Where(t => t.Status == TaskItemStatus.Review))
         {
             var gohan = reviewTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == reviewTask.AssignedAgentId) : null;
-            if (gohan != null && gohan.Role == AgentRole.Gohan)
+            if (gohan != null && gohan.Role == nameof(AgentRole.Gohan))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(reviewTask, gohan, "review");
                 gohan.Status = AgentStatus.Idle;
                 await _agentRepository.UpdateAsync(gohan);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(gohan));
             }
-            var jaco = agents.FirstOrDefault(a => a.Role == AgentRole.Jaco && a.Status == AgentStatus.Idle);
+            var jaco = agents.FirstOrDefault(a => a.Role == nameof(AgentRole.Jaco) && a.Status == AgentStatus.Idle);
             if (jaco != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(reviewTask, jaco, "compliance");
@@ -471,14 +471,14 @@ public class OrchestratorService
         foreach (var compTask in allTasks.Where(t => t.Status == TaskItemStatus.Compliance))
         {
             var jaco = compTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == compTask.AssignedAgentId) : null;
-            if (jaco != null && jaco.Role == AgentRole.Jaco)
+            if (jaco != null && jaco.Role == nameof(AgentRole.Jaco))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(compTask, jaco, "compliance");
                 jaco.Status = AgentStatus.Idle;
                 await _agentRepository.UpdateAsync(jaco);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(jaco));
             }
-            var shenron = agents.FirstOrDefault(a => a.Role == AgentRole.Shenron && a.Status == AgentStatus.Idle);
+            var shenron = agents.FirstOrDefault(a => a.Role == nameof(AgentRole.Shenron) && a.Status == AgentStatus.Idle);
             if (shenron != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(compTask, shenron, "release");
@@ -501,14 +501,14 @@ public class OrchestratorService
         foreach (var relTask in allTasks.Where(t => t.Status == TaskItemStatus.Release))
         {
             var shenron = relTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == relTask.AssignedAgentId) : null;
-            if (shenron != null && shenron.Role == AgentRole.Shenron)
+            if (shenron != null && shenron.Role == nameof(AgentRole.Shenron))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(relTask, shenron, "release");
                 shenron.Status = AgentStatus.Idle;
                 await _agentRepository.UpdateAsync(shenron);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(shenron));
             }
-            var trunks = agents.FirstOrDefault(a => a.Role == AgentRole.Trunks && a.Status == AgentStatus.Idle);
+            var trunks = agents.FirstOrDefault(a => a.Role == nameof(AgentRole.Trunks) && a.Status == AgentStatus.Idle);
             if (trunks != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(relTask, trunks, "memory");
@@ -531,14 +531,14 @@ public class OrchestratorService
         foreach (var memTask in allTasks.Where(t => t.Status == TaskItemStatus.Memory))
         {
             var trunks = memTask.AssignedAgentId.HasValue ? agents.FirstOrDefault(a => a.Id == memTask.AssignedAgentId) : null;
-            if (trunks != null && trunks.Role == AgentRole.Trunks)
+            if (trunks != null && trunks.Role == nameof(AgentRole.Trunks))
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(memTask, trunks, "memory");
                 trunks.Status = AgentStatus.Idle;
                 await _agentRepository.UpdateAsync(trunks);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(trunks));
             }
-            var jiren = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != bulma?.Id && a.Id != coder?.Id && a.Id != piccolo?.Id && a.Id != cell?.Id); // dynamic role-agnostic
+            var jiren = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != trunks?.Id); // dynamic role-agnostic
             if (jiren != null)
             {
                 await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(memTask, jiren, "enforcement");
@@ -601,7 +601,7 @@ public class OrchestratorService
             if (zeno != null && !await HasCompletionEvidenceAsync(overTask, zeno, "oversight"))
                 continue;
 
-            await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(overTask, zeno ?? new Agent { Name = "Unknown", Role = AgentRole.Zeno }, "done");
+            await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(overTask, zeno ?? new Agent { Name = "Unknown", Role = nameof(AgentRole.Zeno) }, "done");
             overTask.Status = TaskItemStatus.Done;
             overTask.StatusEnteredAt = now;
             overTask.UpdatedAt = now;
@@ -655,26 +655,26 @@ public class OrchestratorService
 
         if (task.ComplexityScore >= 7 || task.Priority == TaskPriority.Critical)
         {
-            return PickFrom(agents.Where(a => a.Role == AgentRole.Vegeta))
-                ?? PickFrom(agents.Where(a => a.Role == AgentRole.Kakarot));
+            return PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Vegeta)))
+                ?? PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Kakarot)));
         }
 
         if (task.Title.Contains("architect", StringComparison.OrdinalIgnoreCase)
             || task.Title.Contains("design", StringComparison.OrdinalIgnoreCase))
         {
-            return PickFrom(agents.Where(a => a.Role == AgentRole.Beerus))
-                ?? PickFrom(agents.Where(a => a.Role == AgentRole.Vegeta));
+            return PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Beerus)))
+                ?? PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Vegeta)));
         }
 
         if (task.Title.Contains("refactor", StringComparison.OrdinalIgnoreCase)
             || task.Title.Contains("clean", StringComparison.OrdinalIgnoreCase))
         {
-            return PickFrom(agents.Where(a => a.Role == AgentRole.Piccolo))
-                ?? PickFrom(agents.Where(a => a.Role == AgentRole.Kakarot));
+            return PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Piccolo)))
+                ?? PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Kakarot)));
         }
 
-        return PickFrom(agents.Where(a => a.Role == AgentRole.Kakarot))
-            ?? PickFrom(agents.Where(a => a.Role is AgentRole.Vegeta or AgentRole.Piccolo))
+        return PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Kakarot)))
+            ?? PickFrom(agents.Where(a => a.Role == nameof(AgentRole.Vegeta) || a.Role == nameof(AgentRole.Piccolo)))
             ?? PickFrom(agents);
     }
 
@@ -786,15 +786,22 @@ public class OrchestratorService
     {
         var roleContext = agent.Role switch
         {
-            AgentRole.Whis    => "You are the orchestrator. Analyze and plan this task:",
-            AgentRole.Beerus  => "You are the architect. Design and structure the solution for:",
-            AgentRole.Kakarot => "You are a standard developer. Implement the following task:",
-            AgentRole.Vegeta  => "You are an expert engineer. Solve this complex problem:",
-            AgentRole.Piccolo => "You are a refactoring specialist. Clean and refactor:",
-            AgentRole.Gohan   => "You are the reviewer. Review and validate the solution for:",
-            AgentRole.Trunks  => "You are the memory keeper. Document and record:",
-            AgentRole.Bulma   => "You are the tooling expert. Build and configure:",
-            _                 => "Work on the following task:",
+            "Whis"    => "You are the orchestrator. Analyze and plan this task:",
+            "Beerus"  => "You are the architect. Design and structure the solution for:",
+            "Kakarot" => "You are a standard developer. Implement the following task:",
+            "Vegeta"  => "You are an expert engineer. Solve this complex problem:",
+            "Piccolo" => "You are a refactoring specialist. Clean and refactor:",
+            "Gohan"   => "You are the reviewer. Review and validate the solution for:",
+            "Trunks"  => "You are the memory keeper. Document and record:",
+            "Bulma"   => "You are the tooling expert. Build and configure:",
+            "Cell"    => "You are the security auditor. Audit and analyse:",
+            "Dende"   => "You are the test engineer. Write and run tests for:",
+            "Shenron" => "You are the release manager. Deploy and release:",
+            "Jaco"    => "You are the compliance officer. Review for legal/compliance:",
+            "Zeno"    => "You are the supreme overseer. Make the final call on:",
+            "Jiren"   => "You are the enforcer. Enforce quality and resolve escalation for:",
+            "GrandPriest" => "You are the grand priest. Orchestrate and oversee:",
+            _         => "Work on the following task:",
         };
 
         return $"{roleContext} [{task.Id}] {task.Title}. {task.Description}. Priority: {task.Priority}. Complexity: {task.ComplexityScore}/10.";
