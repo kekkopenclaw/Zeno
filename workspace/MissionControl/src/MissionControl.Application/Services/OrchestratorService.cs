@@ -324,14 +324,16 @@ public class OrchestratorService
                 await _agentRepository.UpdateAsync(piccolo);
                 await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(piccolo));
             }
-            // Ensure Cell agent exists and OpenClaw workspace is created
-            var cell = agents.FirstOrDefault(a => a.Id != piccolo?.Id && a.Status == AgentStatus.Idle); // dynamic role-agnostic, prefer idle
-            if (cell == null)
+            // Prefer the canonical Cell (security) agent; fall back to any idle agent
+            var securityAgent = agents.FirstOrDefault(a => a.Status == AgentStatus.Idle && a.Id != piccolo?.Id
+                                    && a.Role.Equals(nameof(AgentRole.Cell), StringComparison.OrdinalIgnoreCase))
+                                ?? agents.FirstOrDefault(a => a.Id != piccolo?.Id && a.Status == AgentStatus.Idle);
+            if (securityAgent == null)
             {
                 var createDto = new {
-                    Name = "Cell",
-                    Role = "Cell",
-                    Model = "github-copilot/gpt-4.1", // unified model
+                    Name = nameof(AgentRole.Cell),
+                    Role = nameof(AgentRole.Cell),
+                    Model = "github-copilot/gpt-4.1",
                     Description = "Auto-created agent for role Cell",
                     Skills = "Security,Audit,Analysis",
                     Emoji = "🦗",
@@ -342,42 +344,38 @@ public class OrchestratorService
                 };
                 await _agentService.CreateAsync((dynamic)createDto);
                 agents = await _agentRepository.GetByProjectIdAsync(projectId);
-                cell = agents.FirstOrDefault(a => a.Role != null && a.Role.Equals("Security", StringComparison.OrdinalIgnoreCase));
+                securityAgent = agents.FirstOrDefault(a => a.Role.Equals(nameof(AgentRole.Cell), StringComparison.OrdinalIgnoreCase));
             }
-            if (cell != null && _openClawRunner != null)
+            if (securityAgent != null && _openClawRunner != null)
             {
-                var openClawId = ResolveAgentRuntimeName(cell);
+                var openClawId = ResolveAgentRuntimeName(securityAgent);
                 var workspacePath = await _openClawRunner.GetWorkspacePathAsync(openClawId) ?? System.IO.Path.Combine(_openClawRunner.WorkspaceRoot, openClawId);
-                await _openClawRunner.SpawnAgentAsync(openClawId, cell.Model, workspacePath);
+                await _openClawRunner.SpawnAgentAsync(openClawId, securityAgent.Model, workspacePath);
                 var exists = await _openClawRunner.AgentExistsAsync(openClawId);
-                var wsExists = false;
                 var wsPath = await _openClawRunner.GetWorkspacePathAsync(openClawId);
-                if (!string.IsNullOrEmpty(wsPath))
-                    wsExists = System.IO.Directory.Exists(wsPath);
-                if (!exists || !wsExists)
-                {
-                    if (!exists)
-                        System.Console.WriteLine($"[WARN] OpenClaw agent '{openClawId}' not found after creation attempt.");
-                    if (!wsExists)
-                        System.Console.WriteLine($"[WARN] Workspace directory '{wsPath ?? workspacePath}' not found after creation attempt.");
-                }
-                // Now assign and trigger the agent
-                if (cell.Status == AgentStatus.Idle)
-                {
-                    await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(refactorTask, cell, "security");
-                    refactorTask.AssignedAgentId = cell.Id;
-                    cell.Status = AgentStatus.Working;
-                    await _agentRepository.UpdateAsync(cell);
-                    await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(cell));
-                    refactorTask.Status = TaskItemStatus.Security;
-                    refactorTask.StatusEnteredAt = now;
-                    refactorTask.UpdatedAt = now;
-                    await _taskRepository.UpdateAsync(refactorTask);
-                    await LogAndNotify(projectId, refactorTask.AssignedAgentId,
-                        $"🦗 '{refactorTask.Title}' started Security Audit.", refactorTask,
-                        action: "Refactoring→Security", agentName: cell.Name, correlationId: tickCorrelationId);
-                    await DispatchAssignedAgentAsync(refactorTask, agents, "security", tickCorrelationId);
-                }
+                var wsExists = !string.IsNullOrEmpty(wsPath) && System.IO.Directory.Exists(wsPath);
+                if (!exists)
+                    System.Console.WriteLine($"[WARN] OpenClaw agent '{openClawId}' not found after creation attempt.");
+                if (!wsExists)
+                    System.Console.WriteLine($"[WARN] Workspace directory '{wsPath ?? workspacePath}' not found after creation attempt.");
+            }
+            // Assign and trigger the security agent
+            var cell = securityAgent;
+            if (cell != null && cell.Status == AgentStatus.Idle)
+            {
+                await OrchestratorServiceUtils.WriteAgentHandoffFileAsync(refactorTask, cell, "security");
+                refactorTask.AssignedAgentId = cell.Id;
+                cell.Status = AgentStatus.Working;
+                await _agentRepository.UpdateAsync(cell);
+                await _notifier.NotifyAgentStartedAsync(AgentService.MapToDto(cell));
+                refactorTask.Status = TaskItemStatus.Security;
+                refactorTask.StatusEnteredAt = now;
+                refactorTask.UpdatedAt = now;
+                await _taskRepository.UpdateAsync(refactorTask);
+                await LogAndNotify(projectId, refactorTask.AssignedAgentId,
+                    $"🦗 '{refactorTask.Title}' started Security Audit.", refactorTask,
+                    action: "Refactoring→Security", agentName: cell.Name, correlationId: tickCorrelationId);
+                await DispatchAssignedAgentAsync(refactorTask, agents, "security", tickCorrelationId);
             }
         }
 
