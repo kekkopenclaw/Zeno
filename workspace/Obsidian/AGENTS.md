@@ -3,6 +3,9 @@
 OpenClaw is the primary agent and executive operator. Hermes is a collaborative peer. (See SOUL.md for tone, rules, and escalation procedures.)
 
 ## Agent Roles
+- **Agent-Omniking**: (auto-discovered)
+- **Agent-OpenClaw**: (auto-discovered)
+- **Agent-Shared**: (auto-discovered)
 - **OpenClaw**: Main executor. Full tool access, task execution, long-term and project memory management.
 - **Hermes**: Strategic assistant, supporting deep thinking and parallel research.
 

@@ -50,14 +50,14 @@ public class LogsController : ControllerBase
                 ?? HttpContext.Items[CorrelationIdMiddleware.CorrelationIdHeader]?.ToString();
 
             await _logService.WriteAsync(
-                level:         dto.Level,
-                message:       dto.Message,
-                agentName:     null,
-                taskId:        null,
+                level: dto.Level,
+                message: dto.Message,
+                agentName: null,
+                taskId: null,
                 correlationId: correlationId,
-                action:        dto.Url != null ? $"URL:{dto.Url}" : "FrontendError",
-                exception:     dto.StackTrace,
-                source:        "Frontend");
+                action: dto.Url != null ? $"URL:{dto.Url}" : "FrontendError",
+                exception: dto.StackTrace,
+                source: "Frontend");
 
             return Ok();
         }

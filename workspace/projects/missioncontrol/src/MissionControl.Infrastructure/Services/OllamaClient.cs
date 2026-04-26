@@ -17,7 +17,7 @@ public sealed class OllamaClient : IOllamaClient
 
     public OllamaClient(HttpClient http, ILogger<OllamaClient> logger)
     {
-        _http   = http;
+        _http = http;
         _logger = logger;
     }
 

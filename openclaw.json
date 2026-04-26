@@ -30,8 +30,8 @@
     "lastRunMode": "local"
   },
   "meta": {
-    "lastTouchedVersion": "2026.4.10",
-    "lastTouchedAt": "2026-04-22T22:52:51.883Z"
+    "lastTouchedVersion": "2026.4.15",
+    "lastTouchedAt": "2026-04-25T16:32:36.148Z"
   },
   "auth": {
     "profiles": {
@@ -157,6 +157,13 @@
         "workspace": "/Users/kekko/.openclaw/workspaces/mc-13-zeno",
         "agentDir": "/Users/kekko/.openclaw/agents/mc-13-zeno/agent",
         "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-4-vegeta",
+        "name": "mc-4-vegeta",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-4-vegeta",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-4-vegeta/agent",
+        "model": "qwen2.5-coder:14b-instruct-q4_K_M"
       }
     ]
   },

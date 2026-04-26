@@ -182,6 +182,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Whis",
                             Skills = "Orchestration,Routing,Escalation",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -198,6 +199,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Beerus",
                             Skills = "Architecture,SystemDesign,Planning",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = true
                         },
                         new
@@ -214,6 +216,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Kakarot",
                             Skills = "Coding,Implementation,Testing",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -230,6 +233,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Vegeta",
                             Skills = "AdvancedCoding,Performance,Security",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = true
                         },
                         new
@@ -246,6 +250,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Piccolo",
                             Skills = "Refactoring,CleanCode,SOLID",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -262,6 +267,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Gohan",
                             Skills = "CodeReview,QualityAssurance,Security",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = true
                         },
                         new
@@ -278,6 +284,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Trunks",
                             Skills = "MemoryManagement,Learning,Analytics",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -294,6 +301,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Bulma",
                             Skills = "Tooling,ContextManagement,PromptEngineering",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = true
                         },
                         new
@@ -310,6 +318,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Cell",
                             Skills = "Security,Audit,Analysis",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -326,6 +335,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Dende",
                             Skills = "Testing,QA,Fuzzing",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -342,6 +352,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Shenron",
                             Skills = "Release,Deployment,Monitoring",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -358,6 +369,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Jaco",
                             Skills = "Compliance,Legal,Privacy",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -374,6 +386,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Zeno",
                             Skills = "Oversight,Optimization,Authority",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -390,6 +403,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "Jiren",
                             Skills = "Enforcement,Escalation,Intervention",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         },
                         new
@@ -406,6 +420,7 @@ namespace MissionControl.Infrastructure.Migrations
                             Role = "GrandPriest",
                             Skills = "Oversight,Orchestration,Leadership",
                             Status = 0,
+                            TeamId = 1,
                             ToolsEnabled = false
                         });
                 });
@@ -670,6 +685,15 @@ namespace MissionControl.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("Teams");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "The core engineering team for Alpha Project",
+                            Name = "Alpha Team",
+                            ProjectId = 1
+                        });
                 });
 
             modelBuilder.Entity("MissionControl.Domain.Entities.ActivityLog", b =>

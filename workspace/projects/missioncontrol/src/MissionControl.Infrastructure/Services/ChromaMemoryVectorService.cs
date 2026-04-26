@@ -47,13 +47,13 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
         IConfiguration config,
         ILogger<ChromaMemoryVectorService> logger)
     {
-        _chromaHttp     = chromaHttp;
-        _ollama         = ollama;
-        _logger         = logger;
+        _chromaHttp = chromaHttp;
+        _ollama = ollama;
+        _logger = logger;
         _embeddingModel = config["Chroma:EmbeddingModel"] ?? config["Ollama:DefaultModel"] ?? "llama3";
-        _tenant         = config["Chroma:Tenant"]         ?? "default_tenant";
-        _database       = config["Chroma:Database"]       ?? "default_database";
-        _collectionName = config["Chroma:Collection"]     ?? "mission_memories";
+        _tenant = config["Chroma:Tenant"] ?? "default_tenant";
+        _database = config["Chroma:Database"] ?? "default_database";
+        _collectionName = config["Chroma:Collection"] ?? "mission_memories";
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -81,10 +81,10 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
 
             var payload = new
             {
-                ids        = new[] { id },
+                ids = new[] { id },
                 embeddings = new[] { embedding },
-                documents  = new[] { text },
-                metadatas  = new[] { metadata ?? new Dictionary<string, string>() }
+                documents = new[] { text },
+                metadatas = new[] { metadata ?? new Dictionary<string, string>() }
             };
 
             var url = CollectionPath(collectionId, "upsert");
@@ -129,8 +129,8 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
             var payload = new
             {
                 query_embeddings = new[] { queryEmbedding },
-                n_results        = topK,
-                include          = new[] { "documents", "metadatas", "distances" }
+                n_results = topK,
+                include = new[] { "documents", "metadatas", "distances" }
             };
 
             var url = CollectionPath(collectionId, "query");
@@ -144,7 +144,7 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
             }
 
             using var stream = await response.Content.ReadAsStreamAsync(ct);
-            using var doc    = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
             return ParseQueryResults(doc.RootElement);
         }
         catch (Exception ex)
@@ -162,7 +162,7 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
             var collectionId = await EnsureCollectionAsync(ct);
             if (collectionId is null) return;
 
-            var url     = CollectionPath(collectionId, "delete");
+            var url = CollectionPath(collectionId, "delete");
             var payload = new { ids = new[] { id } };
             using var response = await _chromaHttp.PostAsJsonAsync(url, payload, ct);
 
@@ -198,7 +198,7 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
                 if (getResp.IsSuccessStatusCode)
                 {
                     using var stream = await getResp.Content.ReadAsStreamAsync(ct);
-                    using var doc    = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+                    using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
                     if (doc.RootElement.TryGetProperty("id", out var idProp))
                     {
                         _collectionId = idProp.GetString();
@@ -217,8 +217,8 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
             var createUrl = $"api/v2/tenants/{_tenant}/databases/{_database}/collections";
             var createPayload = new
             {
-                name          = _collectionName,
-                metadata      = new Dictionary<string, string> { ["description"] = "Mission Control agent memories" },
+                name = _collectionName,
+                metadata = new Dictionary<string, string> { ["description"] = "Mission Control agent memories" },
                 get_or_create = true,
             };
 
@@ -233,7 +233,7 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
                 }
 
                 using var stream = await createResp.Content.ReadAsStreamAsync(ct);
-                using var doc    = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+                using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
                 if (doc.RootElement.TryGetProperty("id", out var idProp))
                 {
                     _collectionId = idProp.GetString();
@@ -271,7 +271,7 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
                 !root.TryGetProperty("distances", out var distOuter))
                 return results;
 
-            var ids       = idsOuter.EnumerateArray().FirstOrDefault();
+            var ids = idsOuter.EnumerateArray().FirstOrDefault();
             var documents = docsOuter.EnumerateArray().FirstOrDefault();
             var distances = distOuter.EnumerateArray().FirstOrDefault();
             var metadatas = root.TryGetProperty("metadatas", out var metaOuter)
@@ -280,17 +280,17 @@ public sealed class ChromaMemoryVectorService : IChromaVectorService
 
             if (ids.ValueKind == JsonValueKind.Undefined) return results;
 
-            var idArr   = ids.EnumerateArray().ToList();
-            var docArr  = documents.ValueKind != JsonValueKind.Undefined ? documents.EnumerateArray().ToList() : new();
+            var idArr = ids.EnumerateArray().ToList();
+            var docArr = documents.ValueKind != JsonValueKind.Undefined ? documents.EnumerateArray().ToList() : new();
             var distArr = distances.ValueKind != JsonValueKind.Undefined ? distances.EnumerateArray().ToList() : new();
             var metaArr = metadatas.ValueKind != JsonValueKind.Undefined ? metadatas.EnumerateArray().ToList() : new();
 
             for (int i = 0; i < idArr.Count; i++)
             {
-                var id       = idArr[i].GetString() ?? string.Empty;
-                var document = i < docArr.Count  ? docArr[i].GetString()  ?? string.Empty : string.Empty;
+                var id = idArr[i].GetString() ?? string.Empty;
+                var document = i < docArr.Count ? docArr[i].GetString() ?? string.Empty : string.Empty;
                 var distance = i < distArr.Count ? distArr[i].GetDouble() : 0.0;
-                var meta     = new Dictionary<string, string>();
+                var meta = new Dictionary<string, string>();
 
                 if (i < metaArr.Count && metaArr[i].ValueKind == JsonValueKind.Object)
                     foreach (var prop in metaArr[i].EnumerateObject())

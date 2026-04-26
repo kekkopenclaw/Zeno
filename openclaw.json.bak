@@ -24,14 +24,14 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-04-22T19:44:19.480Z",
+    "lastRunAt": "2026-04-22T22:52:51.653Z",
     "lastRunVersion": "2026.4.10",
-    "lastRunCommand": "doctor",
+    "lastRunCommand": "configure",
     "lastRunMode": "local"
   },
   "meta": {
     "lastTouchedVersion": "2026.4.10",
-    "lastTouchedAt": "2026-04-22T19:44:19.491Z"
+    "lastTouchedAt": "2026-04-22T22:52:51.883Z"
   },
   "auth": {
     "profiles": {
@@ -192,6 +192,14 @@
         "-5234401806": {
           "requireMention": false
         }
+      }
+    },
+    "discord": {
+      "enabled": true,
+      "token": "REDACTED",
+      "groupPolicy": "allowlist",
+      "guilds": {
+        "*": {}
       }
     }
   },

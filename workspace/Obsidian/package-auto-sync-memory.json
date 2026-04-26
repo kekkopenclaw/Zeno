@@ -1,0 +1,8 @@
+{
+  "name": "auto-sync-memory",
+  "version": "1.0.0",
+  "main": "auto-sync-memory.js",
+  "dependencies": {
+    "sqlite3": "^6.0.1"
+  }
+}

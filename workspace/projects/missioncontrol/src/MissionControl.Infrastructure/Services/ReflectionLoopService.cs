@@ -31,10 +31,10 @@ public sealed class ReflectionLoopService
         IConfiguration config,
         ILogger<ReflectionLoopService> logger)
     {
-        _ollama      = ollama;
-        _logger      = logger;
-        _enabled     = config.GetValue<bool>("Reflection:Enabled", true);
-        _model       = config["Reflection:Model"] ?? config["Kairos:Model"] ?? "llama3";
+        _ollama = ollama;
+        _logger = logger;
+        _enabled = config.GetValue<bool>("Reflection:Enabled", true);
+        _model = config["Reflection:Model"] ?? config["Kairos:Model"] ?? "llama3";
         _lessonsFile = config["Reflection:LessonsFile"]
                        ?? Path.Combine(Directory.GetCurrentDirectory(), "LESSONS.md");
     }

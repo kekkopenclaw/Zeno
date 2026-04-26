@@ -61,9 +61,9 @@ public sealed class OpenClawRunner : IOpenClawRunner
     public OpenClawRunner(IConfiguration config, ILogger<OpenClawRunner> logger)
     {
         _logger = logger;
-        _exe           = config["OpenClaw:ExecutablePath"] ?? "openclaw";
+        _exe = config["OpenClaw:ExecutablePath"] ?? "openclaw";
         _workspaceRoot = ExpandHome(config["OpenClaw:WorkspaceRoot"] ?? "~/.openclaw/workspaces");
-        _logRoot       = ExpandHome(config["OpenClaw:LogRoot"]       ?? "~/.openclaw/logs");
+        _logRoot = ExpandHome(config["OpenClaw:LogRoot"] ?? "~/.openclaw/logs");
     }
     public async Task<bool> AgentExistsAsync(string agentName, CancellationToken ct = default)
     {
@@ -185,7 +185,7 @@ public sealed class OpenClawRunner : IOpenClawRunner
             yield break;
         }
 
-        using var fs     = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var fs = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var reader = new StreamReader(fs);
 
         // Seek to end so we only tail new lines
@@ -226,16 +226,16 @@ public sealed class OpenClawRunner : IOpenClawRunner
         var psi = new ProcessStartInfo(exe, args)
         {
             RedirectStandardOutput = true,
-            RedirectStandardError  = true,
-            UseShellExecute        = false,
-            CreateNoWindow         = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
         };
 
         using var process = new Process { StartInfo = psi, EnableRaisingEvents = true };
         var output = new System.Text.StringBuilder();
 
         process.OutputDataReceived += (_, e) => { if (e.Data != null) output.AppendLine(e.Data); };
-        process.ErrorDataReceived  += (_, e) => { if (e.Data != null) output.AppendLine(e.Data); };
+        process.ErrorDataReceived += (_, e) => { if (e.Data != null) output.AppendLine(e.Data); };
 
         process.Start();
         process.BeginOutputReadLine();

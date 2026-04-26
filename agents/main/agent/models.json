@@ -2,7 +2,6 @@
   "providers": {
     "codex": {
       "baseUrl": "https://chatgpt.com/backend-api/v1",
-      "apiKey": "codex-app-server",
       "auth": "token",
       "api": "openai-codex-responses",
       "models": [
@@ -72,7 +71,8 @@
             "supportsUsageInStreaming": true
           }
         }
-      ]
+      ],
+      "apiKey": "codex-app-server"
     },
     "github-copilot": {
       "baseUrl": "https://api.individual.githubcopilot.com/v1",

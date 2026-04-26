@@ -6,13 +6,13 @@
       "agentId": "main",
       "sessionKey": "agent:main:telegram:direct:820783990",
       "name": "nightly-dream-agent-memory",
-      "description": "Nightly dream: summarize new lessons, embed QMD vault, extract facts to SQLite (2:52 AM Europe/London).",
+      "description": "Nightly dream: agent LLM summarize lessons, embed QMD vault, extract facts to SQLite (3:03 AM Europe/London).",
       "enabled": true,
       "createdAtMs": 1776562181961,
-      "updatedAtMs": 1776563527674,
+      "updatedAtMs": 1777082586354,
       "schedule": {
         "kind": "cron",
-        "expr": "52 2 * * *",
+        "expr": "3 3 * * *",
         "tz": "Europe/London"
       },
       "sessionTarget": "main",
@@ -22,13 +22,50 @@
         "text": "Run: node obsidian/summarize-to-lessons.js && qmd embed && node obsidian/l3-to-sqlite.js\n\nAutomated: summarize new lessons, embed vault, extract facts to SQLite."
       },
       "state": {
-        "nextRunAtMs": 1776649920000,
-        "lastRunAtMs": 1776563520005,
+        "nextRunAtMs": 1777168980000,
+        "lastRunAtMs": 1777082580007,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 7669,
+        "lastDurationMs": 6347,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "2b2364b6-85b5-469d-981d-b7dcb7ba32e1",
+      "agentId": "mc-1-whis",
+      "sessionKey": "agent:mc-1-whis:telegram:direct:820783990",
+      "name": "Copilot tmux polling/automation",
+      "enabled": true,
+      "createdAtMs": 1777140278545,
+      "updatedAtMs": 1777149669557,
+      "schedule": {
+        "kind": "every",
+        "everyMs": 10000,
+        "anchorMs": 1777142473567
+      },
+      "sessionTarget": "session:agent:mc-1-whis:telegram:direct:820783990",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Copilot CLI autonomous loop (status every loop):\n- Tmux session: copilot:0.0\n- Project root: /Users/kekko/.openclaw/workspace/projects/missioncontrol\n- Seeder file: src/MissionControl.Infrastructure/Data/DbSeeder.cs\n- Database: data/missioncontrol.db\n\nOn every loop:\n1. Capture pane output from tmux copilot:0.0 and analyze.\n2. If any staged (unsubmitted) input is present in the prompt, send Enter immediately (repeat if needed).\n3. If Copilot is stuck or output is not advancing for 2+ cycles, send a nudge (e.g. 'continue', 'show code') and Enter.\n4. If no progress after several nudges, suggest session restart in the status message.\n5. After every actual Copilot interaction, send a Telegram message update HERE with:\n   - Current Copilot prompt/output\n   - What action (if any) was sent (e.g. Enter, continue, etc.)\n   - Whether Copilot advanced, replied, or remains stalled.\n6. Repeat this loop until all tasks and quality gates (lint, tests, E2E, Sonar, build) are green.\n\nSkill logic: Only consider a step complete if Copilot responds (pane changes). Do not wait for human input between turns. Autonomously escalate if stuck.\n\nAct as an autonomous agent—drive Copilot live, not just monitor.",
+        "model": "default"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "telegram",
+        "to": "820783990",
+        "bestEffort": true
+      },
+      "state": {
+        "nextRunAtMs": 1777149675944,
+        "lastRunAtMs": 1777149665944,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 3613,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     }
   ]

@@ -24,8 +24,8 @@ public sealed class LogTailHostedService : BackgroundService
         ILogger<LogTailHostedService> logger)
     {
         _scopeFactory = scopeFactory;
-        _runner       = runner;
-        _logger       = logger;
+        _runner = runner;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,9 +42,9 @@ public sealed class LogTailHostedService : BackgroundService
         }
         try
         {
-            using var scope   = _scopeFactory.CreateScope();
-            var agentRepo     = scope.ServiceProvider.GetRequiredService<MissionControl.Domain.Interfaces.IAgentRepository>();
-            var allAgents     = await agentRepo.GetAllAsync();
+            using var scope = _scopeFactory.CreateScope();
+            var agentRepo = scope.ServiceProvider.GetRequiredService<MissionControl.Domain.Interfaces.IAgentRepository>();
+            var allAgents = await agentRepo.GetAllAsync();
             foreach (var agent in allAgents.Where(a => a.OpenClawAgentId != null))
             {
                 await StartTailAsync(agent.OpenClawAgentId!, stoppingToken);
@@ -91,19 +91,19 @@ public sealed class LogTailHostedService : BackgroundService
         {
             await foreach (var line in _runner.TailLogStreamAsync(agentId, ct))
             {
-                using var scope    = _scopeFactory.CreateScope();
-                var notifier       = scope.ServiceProvider.GetRequiredService<ISignalRNotifier>();
-                var logSvc         = scope.ServiceProvider.GetRequiredService<ILogService>();
+                using var scope = _scopeFactory.CreateScope();
+                var notifier = scope.ServiceProvider.GetRequiredService<ISignalRNotifier>();
+                var logSvc = scope.ServiceProvider.GetRequiredService<ILogService>();
 
                 await notifier.NotifyAgentLogLineAsync(agentId, line);
                 await logSvc.WriteAsync(
-                    level:         "Info",
-                    message:       line,
-                    agentName:     $"mc-{agentId}",
-                    taskId:        null,
+                    level: "Info",
+                    message: line,
+                    agentName: $"mc-{agentId}",
+                    taskId: null,
                     correlationId: null,
-                    action:        "LogTail",
-                    source:        "OpenClaw");
+                    action: "LogTail",
+                    source: "OpenClaw");
             }
         }
         catch (OperationCanceledException) { /* normal shutdown */ }
