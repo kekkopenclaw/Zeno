@@ -1,0 +1,263 @@
+{
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "trustedProxies": [
+      "127.0.0.1",
+      "::1",
+      "100.101.87.89"
+    ],
+    "tailscale": {
+      "mode": "serve",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "allowedOrigins": [
+        "http://100.100.218.48:18789",
+        "https://francescos-mac-mini.taila9bb1f.ts.net"
+      ]
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-04-26T16:33:41.957Z",
+    "lastRunVersion": "2026.4.10",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.4.10",
+    "lastTouchedAt": "2026-04-26T16:33:42.103Z"
+  },
+  "auth": {
+    "profiles": {
+      "github-copilot:github": {
+        "provider": "github-copilot",
+        "mode": "token"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/Users/kekko/.openclaw/workspace",
+      "model": {
+        "primary": "github-copilot/gpt-4.1"
+      },
+      "models": {
+        "github-copilot/gpt-4.1": {},
+        "github-copilot/gpt-4o": {}
+      },
+      "compaction": {
+        "reserveTokensFloor": 40000,
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 10000
+        }
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "model": "github-copilot/gpt-4.1",
+        "tools": {
+          "profile": "full"
+        }
+      },
+      {
+        "id": "mc-1-whis",
+        "name": "mc-1-whis",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-1-whis",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-1-whis/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-2-beerus",
+        "name": "mc-2-beerus",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-2-beerus",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-2-beerus/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-8-bulma",
+        "name": "mc-8-bulma",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-8-bulma",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-8-bulma/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-3-kakarot",
+        "name": "mc-3-kakarot",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-3-kakarot",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-3-kakarot/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-5-piccolo",
+        "name": "mc-5-piccolo",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-5-piccolo",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-5-piccolo/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-9-cell",
+        "name": "mc-9-cell",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-9-cell",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-9-cell/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-10-dende",
+        "name": "mc-10-dende",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-10-dende",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-10-dende/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-6-gohan",
+        "name": "mc-6-gohan",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-6-gohan",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-6-gohan/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-12-jaco",
+        "name": "mc-12-jaco",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-12-jaco",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-12-jaco/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-11-shenron",
+        "name": "mc-11-shenron",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-11-shenron",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-11-shenron/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-7-trunks",
+        "name": "mc-7-trunks",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-7-trunks",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-7-trunks/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-14-jiren",
+        "name": "mc-14-jiren",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-14-jiren",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-14-jiren/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-13-zeno",
+        "name": "mc-13-zeno",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-13-zeno",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-13-zeno/agent",
+        "model": "github-copilot/gpt-4.1"
+      },
+      {
+        "id": "mc-4-vegeta",
+        "name": "mc-4-vegeta",
+        "workspace": "/Users/kekko/.openclaw/workspaces/mc-4-vegeta",
+        "agentDir": "/Users/kekko/.openclaw/agents/mc-4-vegeta/agent",
+        "model": "qwen2.5-coder:14b-instruct-q4_K_M"
+      }
+    ]
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "full",
+    "exec": {
+      "security": "full",
+      "ask": "off",
+      "host": "gateway"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "accounts": {
+        "primary": {
+          "botToken": "${TELEGRAM_TOKEN}"
+        },
+        "secondary": {
+          "botToken": "${TELEGRAM_TOKEN2}"
+        }
+      },
+      "defaultAccount": "primary",
+      "dmPolicy": "allowlist",
+      "allowFrom": [
+        820783990
+      ],
+      "groupPolicy": "allowlist",
+      "groups": {
+        "-5234401806": {
+          "requireMention": false
+        }
+      }
+    },
+"discord": {
+  "enabled": true,
+  "token": "${DISCORD_BOT_TOKEN}",
+  "allowBots": true,
+  "groupPolicy": "allowlist",
+  "guilds": {
+    "${DISCORD_BOT_SERVER_ID}": {
+      "requireMention": true,
+      "channels": {
+        "${DISCORD_BOT_CHANNEL_ID}": {
+          "allow": true,
+          "requireMention": true
+        }
+      }
+    }
+  }
+},
+  "bindings": [
+    {
+      "agentId": "mc-1-whis",
+      "match": {
+        "channel": "telegram",
+        "accountId": "primary"
+      }
+    },
+    {
+      "agentId": "mc-2-beerus",
+      "match": {
+        "channel": "telegram",
+        "accountId": "secondary"
+      }
+    }
+  ],
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        },
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "github-copilot": {
+        "enabled": true
+      }
+    }
+  }
+}

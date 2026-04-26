@@ -24,14 +24,14 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-04-12T19:47:07.969Z",
-    "lastRunVersion": "2026.4.15",
-    "lastRunCommand": "onboard",
+    "lastRunAt": "2026-04-22T19:44:19.480Z",
+    "lastRunVersion": "2026.4.10",
+    "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
   "meta": {
-    "lastTouchedVersion": "2026.4.15",
-    "lastTouchedAt": "2026-04-19T18:16:57.471Z"
+    "lastTouchedVersion": "2026.4.10",
+    "lastTouchedAt": "2026-04-22T19:44:19.491Z"
   },
   "auth": {
     "profiles": {
@@ -67,21 +67,6 @@
           "profile": "full"
         }
       },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       {
         "id": "mc-1-whis",
         "name": "mc-1-whis",
@@ -190,27 +175,40 @@
     "telegram": {
       "enabled": true,
       "accounts": {
-        "primary": { "botToken": "${TELEGRAM_TOKEN}" },
-        "secondary": { "botToken": "${TELEGRAM_TOKEN2}" }
+        "primary": {
+          "botToken": "${TELEGRAM_TOKEN}"
+        },
+        "secondary": {
+          "botToken": "${TELEGRAM_TOKEN2}"
+        }
       },
       "defaultAccount": "primary",
       "dmPolicy": "allowlist",
-      "allowFrom": [820783990],
+      "allowFrom": [
+        820783990
+      ],
       "groupPolicy": "allowlist",
-      "groupAllowFrom": [-5234401806],
       "groups": {
-        "-5234401806": { "requireMention": false }
+        "-5234401806": {
+          "requireMention": false
+        }
       }
     }
   },
   "bindings": [
-    { 
-      "agentId": "mc-1-whis", 
-      "match": { "channel": "telegram", "accountId": "primary" } 
+    {
+      "agentId": "mc-1-whis",
+      "match": {
+        "channel": "telegram",
+        "accountId": "primary"
+      }
     },
-    { 
-      "agentId": "mc-2-beerus", 
-      "match": { "channel": "telegram", "accountId": "secondary" } 
+    {
+      "agentId": "mc-2-beerus",
+      "match": {
+        "channel": "telegram",
+        "accountId": "secondary"
+      }
     }
   ],
   "hooks": {

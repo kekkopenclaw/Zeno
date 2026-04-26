@@ -23,12 +23,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Agent-Omniking/daily/2026-04-19.md",
+                "file": "Agent-Omniking/mistakes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-04-19"
+              "title": "mistakes"
             }
           }
         ],
@@ -196,9 +196,10 @@
   },
   "active": "e466e8df81340951",
   "lastOpenFiles": [
-    "Agent-Omniking/daily/2026-04-18.md",
+    "Agent-Omniking/lessons/2026-04-26.md",
     "Agent-Omniking/daily/2026-04-12.md",
     "Agent-Omniking/daily/2026-04-19.md",
+    "Agent-Omniking/daily/2026-04-18.md",
     "summarize-to-lessons.js",
     "vault_facts.db",
     "package-lock.json",

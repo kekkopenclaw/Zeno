@@ -62,13 +62,6 @@
     "list": [
       {
         "id": "main",
-      {
-        "id": "grandpriest",
-        "model": "github-copilot/gpt-4.1",
-        "tools": {
-          "profile": "full"
-        }
-      },
         "model": "github-copilot/gpt-4.1",
         "tools": {
           "profile": "full"
@@ -197,36 +190,29 @@
     "telegram": {
       "enabled": true,
       "accounts": {
-        "primary": {
-          "botToken": "${TELEGRAM_TOKEN}"
-        },
-        "secondary": {
-          "botToken": "${TELEGRAM_TOKEN2}"
-        }
+        "primary": { "botToken": "${TELEGRAM_TOKEN}" },
+        "secondary": { "botToken": "${TELEGRAM_TOKEN2}" }
       },
       "defaultAccount": "primary",
       "dmPolicy": "allowlist",
-      "allowFrom": [
-        "820783990"
-      ],
-      "contextVisibility": "all",
+      "allowFrom": [820783990],
+      "groupPolicy": "allowlist",
+      "groupAllowFrom": [-5234401806],
       "groups": {
-        "*": {
-          "requireMention": false
-        }
-      },
-      "streaming": {
-        "mode": "partial",
-        "chunkMode": "newline",
-        "preview": { "chunk": {} },
-        "block": {
-          "enabled": true,
-          "coalesce": {}
-        }
+        "-5234401806": { "requireMention": false }
       }
     }
   },
-  
+  "bindings": [
+    { 
+      "agentId": "mc-1-whis", 
+      "match": { "channel": "telegram", "accountId": "primary" } 
+    },
+    { 
+      "agentId": "mc-2-beerus", 
+      "match": { "channel": "telegram", "accountId": "secondary" } 
+    }
+  ],
   "hooks": {
     "internal": {
       "enabled": true,
