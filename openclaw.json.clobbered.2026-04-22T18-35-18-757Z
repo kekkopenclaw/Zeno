@@ -1,0 +1,12 @@
+{
+  "gateway": {
+    "auth": {
+      "mode": "token",
+      "token": "2bfaa640b2782c8fd8f86ec54aa34221"
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.4.10",
+    "lastTouchedAt": "2026-04-22T18:35:18.689Z"
+  }
+}

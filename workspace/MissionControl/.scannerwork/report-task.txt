@@ -1,6 +1,0 @@
-projectKey=MissionControl
-serverUrl=http://localhost:9000
-serverVersion=26.4.0.121862
-dashboardUrl=http://localhost:9000/dashboard?id=MissionControl
-ceTaskId=2347d493-7077-4f99-aacf-bf685a84f9eb
-ceTaskUrl=http://localhost:9000/api/ce/task?id=2347d493-7077-4f99-aacf-bf685a84f9eb

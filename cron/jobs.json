@@ -9,7 +9,7 @@
       "description": "Nightly dream: agent LLM summarize lessons, embed QMD vault, extract facts to SQLite (3:03 AM Europe/London).",
       "enabled": true,
       "createdAtMs": 1776562181961,
-      "updatedAtMs": 1776564188072,
+      "updatedAtMs": 1777082586354,
       "schedule": {
         "kind": "cron",
         "expr": "3 3 * * *",
@@ -22,11 +22,11 @@
         "text": "Run: node obsidian/summarize-to-lessons.js && qmd embed && node obsidian/l3-to-sqlite.js\n\nAutomated: summarize new lessons, embed vault, extract facts to SQLite."
       },
       "state": {
-        "nextRunAtMs": 1776650580000,
-        "lastRunAtMs": 1776564180005,
+        "nextRunAtMs": 1777168980000,
+        "lastRunAtMs": 1777082580007,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 8067,
+        "lastDurationMs": 6347,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 0
       }

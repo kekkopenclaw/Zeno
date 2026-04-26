@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────── */
+:root {
+  --bg-base:       #0a0a0b;
+  --bg-surface:    #111113;
+  --bg-elevated:   #1a1a1e;
+  --bg-hover:      #1e1e22;
+  --border:        #222226;
+  --border-bright: #2e2e36;
+  --text-primary:  #ececf0;
+  --text-secondary:#8b8b96;
+  --text-muted:    #44444f;
+  --accent:        #7c3aed;
+  --accent-hover:  #6d28d9;
+  --accent-dim:    rgba(124,58,237,0.15);
+  --blue:          #3b82f6;
+  --green:         #22c55e;
+  --amber:         #f59e0b;
+  --red:           #ef4444;
+  --purple:        #a855f7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbars ────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f50; }
+
+/* ── Cards & surfaces ──────────────────────────────── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.card-hover:hover {
+  border-color: var(--border-bright);
+  background: var(--bg-elevated);
+  transition: all 0.15s ease;
+}
+
+/* ── Nav active state (global) ─────────────────────── */
+.nav-active {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ── Badges / Pills ────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── Input ─────────────────────────────────────────── */
+input, textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  outline: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+input:focus, textarea:focus { border-color: var(--accent); }
+
+/* ── Button ────────────────────────────────────────── */
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-ghost { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); }

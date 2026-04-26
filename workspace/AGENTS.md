@@ -1,3 +1,5 @@
+For any coding, refactoring, bug fixing, or dashboard task, immediately use the copilot_cli skill.
+
 # AGENTS.md - Your Workspace
 
 This folder is home. Treat it that way.

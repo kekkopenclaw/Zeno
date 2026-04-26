@@ -1,0 +1,37 @@
+# Dotnet
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.user
+*.cache
+*.suo
+*.vs/
+TestResults/
+# Node/npm
+node_modules/
+default_local.settings.json
+# OS/system
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swn
+*.swo
+*~
+# Logs
+debug.log
+npm-debug.log
+logs/
+logs/*
+/build/
+# SQLite/DB
+*.sqlite*
+*.db
+*.sqlite-shm
+*.sqlite-wal
+
+# Ignore agent-built OpenClaw workspaces that aren't source
+.agents/

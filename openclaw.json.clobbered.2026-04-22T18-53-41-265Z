@@ -1,0 +1,36 @@
+{
+  "gateway": {...},
+  ...,
+  "channels": {
+    "telegram": {
+      ... ,
+      "accounts": {
+        "primary": {"botToken": "${TELEGRAM_TOKEN}"},
+        "secondary": {"botToken": "${TELEGRAM_TOKEN2}"}
+      },
+      "defaultAccount": "primary",
+      "dmPolicy": "allowlist",
+      "allowFrom": ["820783990"],
+      "contextVisibility": "all",
+      "groups": {
+        "-5234401806": {
+          "groupPolicy": "open",
+          "requireMention": false
+        }
+      }
+      ...
+    }
+  },
+  "bindings": [
+    {
+      "type": "account",
+      "agentId": "main",
+      "match": { "channel": "telegram", "accountId": "primary" }
+    },
+    {
+      "type": "account",
+      "agentId": "mc-1-whis",
+      "match": { "channel": "telegram", "accountId": "secondary" }
+    }
+  ]
+}
